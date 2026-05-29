@@ -391,7 +391,7 @@ function renderTopMenuChart(topMenuData) {
     // Truncate long names
     return item.menu.length > 20 ? item.menu.substring(0, 20) + '...' : item.menu;
   });
-  const values = topMenuData.map(item => item.qty);
+  const values = topMenuData.map(item => item.total);
   const fullLabels = topMenuData.map(item => item.menu); // For tooltip
   
   // Gradient
@@ -406,7 +406,7 @@ function renderTopMenuChart(topMenuData) {
     data: {
       labels: labels,
       datasets: [{
-        label: 'Terjual (Qty)',
+        label: 'Total Penjualan',
         data: values,
         backgroundColor: gradient,
         borderRadius: 4,
@@ -422,7 +422,7 @@ function renderTopMenuChart(topMenuData) {
         tooltip: {
           callbacks: {
             title: (ctx) => fullLabels[ctx[0].dataIndex],
-            label: (ctx) => ` ${formatNumber(ctx.raw)} porsi`
+            label: (ctx) => ` ${formatCurrency(ctx.raw)}`
           }
         }
       },
