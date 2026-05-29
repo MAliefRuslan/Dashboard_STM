@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Dashboard Penjualan Sate Taichan - Analisis penjualan harian, per jam, metode pembayaran, dan menu terlaris">
+  <title>Dashboard Penjualan | Sate Taichan</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <div class="logo-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5"/>
+              <path d="M2 12l10 5 10-5"/>
+            </svg>
+          </div>
+          <div class="logo-text">
+            <span class="logo-title">Sate Taichan Mappanyukki</span>
+            <span class="logo-subtitle">Sales Dashboard</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-filters">
+        <h3 class="filter-heading">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+          </svg>
+          Filter Data
+        </h3>
+
+        <div class="filter-group">
+          <label for="filterCabang">Cabang</label>
+          <select id="filterCabang"></select>
+        </div>
+
+        <div class="filter-group">
+          <label for="filterMonth">Bulan</label>
+          <select id="filterMonth"></select>
+        </div>
+
+        <button class="btn-reset" id="btnReset" onclick="resetFilters()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+            <polyline points="1 4 1 10 7 10"/>
+            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+          </svg>
+          Reset Filter
+        </button>
+      </div>
+
+      <div class="sidebar-footer">
+        <p>Data: Master_Data.xlsx</p>
+        <p id="lastUpdate">Updated: -</p>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Mobile Header -->
+      <header class="mobile-header">
+        <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+            <line x1="3" y1="12" x2="21" y2="12"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+        <h1 class="page-title">Dashboard Penjualan</h1>
+      </header>
+
+      <!-- Loading Overlay -->
+      <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner">
+          <div class="spinner"></div>
+          <p>Memuat data dashboard...</p>
+        </div>
+      </div>
+
+      <!-- KPI Cards -->
+      <section class="kpi-section" id="kpiSection">
+        <div class="kpi-card kpi-revenue">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <div class="kpi-content">
+            <span class="kpi-label">Total Revenue</span>
+            <span class="kpi-value" id="kpiRevenue">-</span>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-bills">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+          </div>
+          <div class="kpi-content">
+            <span class="kpi-label">Total Bill</span>
+            <span class="kpi-value" id="kpiBills">-</span>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-avg">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M16 8l-4 4-4-4"/>
+              <path d="M8 16l4-4 4 4"/>
+            </svg>
+          </div>
+          <div class="kpi-content">
+            <span class="kpi-label">Rata-rata / Bill</span>
+            <span class="kpi-value" id="kpiAvg">-</span>
+          </div>
+        </div>
+
+        <div class="kpi-card kpi-items">
+          <div class="kpi-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="1" y="3" width="15" height="13"/>
+              <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+              <circle cx="5.5" cy="18.5" r="2.5"/>
+              <circle cx="18.5" cy="18.5" r="2.5"/>
+            </svg>
+          </div>
+          <div class="kpi-content">
+            <span class="kpi-label">Jenis Transaksi</span>
+            <span class="kpi-value" id="kpiVisitTypes">-</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Visit Purpose Cards -->
+      <section class="visit-section" id="visitSection">
+        <div class="section-header">
+          <h2>Jenis Transaksi (Visit Purpose)</h2>
+        </div>
+        <div class="visit-cards" id="visitCards"></div>
+      </section>
+
+      <!-- Charts Row 1: Daily & Hourly Sales -->
+      <section class="charts-row">
+        <div class="chart-card chart-large">
+          <div class="chart-header">
+            <h2>Penjualan Harian</h2>
+            <span class="chart-badge">Per Tanggal</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chartDaily"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card chart-large">
+          <div class="chart-header">
+            <h2>Penjualan Per Jam</h2>
+            <span class="chart-badge">Per Hour</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chartHourly"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- Charts Row 2: Payment Method & Top Menu -->
+      <section class="charts-row">
+        <div class="chart-card chart-medium">
+          <div class="chart-header">
+            <h2>Metode Pembayaran</h2>
+            <span class="chart-badge">Payment Method</span>
+          </div>
+          <div class="chart-wrapper chart-pie-wrapper">
+            <canvas id="chartPayment"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card chart-large">
+          <div class="chart-header">
+            <h2>Top 10 Menu Terlaris</h2>
+            <span class="chart-badge">By Quantity</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chartTopMenu"></canvas>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Overlay for mobile sidebar -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
