@@ -13,9 +13,22 @@ const MONTH_ORDER = [
   'July', 'August', 'September', 'October', 'November', 'December'
 ];
 
+// Convert month number to name (handles both "1" and "January")
+function toMonthName(val) {
+  if (!val) return null;
+  const str = String(val).trim();
+  const num = parseInt(str, 10);
+  if (!isNaN(num) && num >= 1 && num <= 12) {
+    return MONTH_ORDER[num - 1];
+  }
+  // Already a name
+  if (MONTH_ORDER.includes(str)) return str;
+  return str;
+}
+
 // Collect unique values
 const cabangs = [...new Set(data.map(r => r['Cabang']).filter(Boolean))].sort();
-const months = [...new Set(data.map(r => r['Month']).filter(Boolean))].sort((a, b) => MONTH_ORDER.indexOf(a) - MONTH_ORDER.indexOf(b));
+const months = [...new Set(data.map(r => toMonthName(r['Month'])).filter(Boolean))].sort((a, b) => MONTH_ORDER.indexOf(a) - MONTH_ORDER.indexOf(b));
 
 console.log('Cabang:', cabangs);
 console.log('Months:', months);
@@ -52,6 +65,10 @@ function addToBucket(bucket, row) {
   const salesNum = row['Sales Number'];
   const visitPurpose = row['Visit Purpose'] || 'Unknown';
   const paymentMethod = row['Payment Method'] || 'Unknown';
+  const monthRaw = row['Month'];
+  const month = toMonthName(monthRaw) || 'Unknown';
+  row['Month'] = month; // update row with month name
+
   const menu = row['Menu'] || 'Unknown';
   const qty = row['Qty'] || 0;
 
@@ -88,7 +105,7 @@ console.log('Aggregating data...');
 let count = 0;
 data.forEach(row => {
   const cabang = row['Cabang'] || 'Unknown';
-  const month = row['Month'] || 'Unknown';
+  const month = toMonthName(row['Month']) || 'Unknown';
 
   // Specific cabang + specific month
   addToBucket(ensureBucket(getKey(cabang, month)), row);
