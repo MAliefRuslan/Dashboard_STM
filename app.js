@@ -244,6 +244,15 @@ function generateInsights(data, cabang, month) {
     }
   }
 
+  // Get Next Month for predictive text
+  let nextMonthName = 'Bulan Depan';
+  if (month !== 'Semua Bulan') {
+    const monthIdx = MONTH_ORDER.indexOf(month);
+    if (monthIdx >= 0 && monthIdx < MONTH_ORDER.length - 1) {
+      nextMonthName = MONTH_ORDER[monthIdx + 1];
+    }
+  }
+
   // 1. Time Analysis
   let peakHour = null;
   let maxSales = 0;
@@ -258,7 +267,7 @@ function generateInsights(data, cabang, month) {
 
   let timeText = 'Data historis belum cukup untuk membuat perencanaan jam operasional.';
   if (peakHour !== null) {
-    timeText = `<strong>Perencanaan Operasional (${month}):</strong> Berdasarkan lonjakan trafik di pukul <strong>${String(peakHour).padStart(2, '0')}:00 - ${String(peakHour + 1).padStart(2, '0')}:00</strong>, `;
+    timeText = `<strong>Perencanaan Operasional (${nextMonthName}):</strong> Berdasarkan lonjakan trafik di pukul <strong>${String(peakHour).padStart(2, '0')}:00 - ${String(peakHour + 1).padStart(2, '0')}:00</strong> pada bulan ${month}, `;
     if (peakHour >= 16 && peakHour <= 18) {
       timeText += 'jadwalkan <em>staff briefing</em> dan finalisasi <em>prep</em> dapur selambatnya pukul 15.30. Alokasikan kru tambahan di area depan untuk mengatur antrean awal buka.';
     } else if (peakHour >= 19 && peakHour <= 21) {
@@ -287,7 +296,7 @@ function generateInsights(data, cabang, month) {
     const top1 = data.topMenu[0].menu;
     const top2 = data.topMenu[1].menu;
     const isTaichan = top1.toLowerCase().includes('taichan') || top1.toLowerCase().includes('sate');
-    productText = `<strong>Perencanaan Menu & Inventory (${month}):</strong> Prioritaskan pengadaan pasokan bahan baku (<em>supply chain</em>) untuk <strong>${top1}</strong> dan <strong>${top2}</strong>. `;
+    productText = `<strong>Perencanaan Menu & Inventory (${nextMonthName}):</strong> Prioritaskan pengadaan pasokan bahan baku (<em>supply chain</em>) untuk <strong>${top1}</strong> dan <strong>${top2}</strong>. `;
     if (isTaichan) {
       productText += 'Siapkan skema <strong>Paket Makan Bundling</strong> (Sate + Minuman) bulan depan sebagai standar <i>upselling</i> kasir guna mendongkrak rata-rata pembelian per struk.';
     } else {
