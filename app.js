@@ -480,7 +480,16 @@ function generateInsights(data, cabang, month) {
           fill: true
         }]
       },
-      options: defaultOpts
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false }, tooltip: { enabled: true } },
+        scales: { 
+          x: { display: true, ticks: { color: 'rgba(255,255,255,0.5)', font: { size: 10 }, maxRotation: 0, autoSkip: true, maxTicksLimit: 6 }, grid: { display: false } }, 
+          y: { display: false } 
+        },
+        layout: { padding: { top: 10, bottom: 5 } }
+      }
     });
   }
 
@@ -498,10 +507,18 @@ function generateInsights(data, cabang, month) {
           data: [data.topMenu[0].total, data.topMenu[1].total, others > 0 ? others : 0],
           backgroundColor: ['#f59e0b', '#fbbf24', 'rgba(255,255,255,0.2)'],
           borderWidth: 0,
-          cutout: '70%'
+          cutout: '65%'
         }]
       },
-      options: { ...defaultOpts, plugins: { tooltip: { enabled: true } }, layout: { padding: 5 } }
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { 
+          legend: { display: true, position: 'right', labels: { color: '#ccc', font: { size: 10 }, boxWidth: 12, padding: 10 } },
+          tooltip: { enabled: true } 
+        },
+        layout: { padding: 0 }
+      }
     });
   }
 
