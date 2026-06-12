@@ -127,7 +127,7 @@ function updateDashboard() {
   
   updateKPIs(data);
   updateVisitPurpose(data);
-  generateInsights(data, cabang);
+  generateInsights(data, cabang, month);
   renderCharts(data);
 }
 
@@ -172,8 +172,21 @@ function updateVisitPurpose(data) {
   }
 }
 
-// AI Insights Generator (Makassar F&B Context)
-function generateInsights(data, cabang) {
+const MONTH_ORDER = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+// AI Insights Generator (Makassar F&B Context - Tempat Makan)
+function generateInsights(data, cabang, month) {
+  // Get Previous Data for MoM
+  let prevData = null;
+  if (month !== 'Semua Bulan') {
+    const monthIdx = MONTH_ORDER.indexOf(month);
+    if (monthIdx > 0) {
+      const prevMonth = MONTH_ORDER[monthIdx - 1];
+      const prevKey = `${cabang}|${prevMonth}`;
+      prevData = dashboardData.data[prevKey];
+    }
+  }
+
   // 1. Time Analysis
   let peakHour = null;
   let maxSales = 0;
@@ -191,11 +204,25 @@ function generateInsights(data, cabang) {
     const isNight = peakHour >= 18 || peakHour <= 2;
     timeText = `Jam tersibuk adalah pukul <strong>${String(peakHour).padStart(2, '0')}:00 - ${String(peakHour + 1).padStart(2, '0')}:00</strong>. `;
     if (isNight) {
-      timeText += 'Sangat cocok dengan tren nongkrong malam Makassar. Rekomendasi: Adakan <em>Midnight Promo</em> atau hadirkan <em>Live Music</em> untuk menahan customer <i>stay</i> lebih lama dan menambah pesanan.';
+      timeText += 'Ini menunjukkan tingginya minat makan malam (dinner). Rekomendasi: Pastikan ketersediaan meja yang cukup, pelayanan cepat saji, dan berikan promosi "Paket Makan Keluarga" untuk menarik rombongan.';
     } else {
-      timeText += 'Puncak traffic berada di siang/sore hari. Fokuskan kecepatan pelayanan staf dan pastikan bahan baku aman untuk menghadapi lonjakan.';
+      timeText += 'Puncak traffic berada di siang/sore hari. Fokuskan kecepatan pelayanan staf dan pastikan bahan baku aman untuk menghadapi lonjakan jam makan.';
     }
   }
+
+  if (prevData && prevData.hourlySales) {
+    let prevMax = 0;
+    let prevPeak = null;
+    for (const [hour, sales] of Object.entries(prevData.hourlySales)) {
+      if (sales > prevMax) { prevMax = sales; prevPeak = parseInt(hour, 10); }
+    }
+    if (prevPeak !== null && prevPeak !== peakHour) {
+      timeText += `<br><br>📊 <em>Bulan Lalu:</em> Puncak jam makan ada di <strong>${String(prevPeak).padStart(2, '0')}:00</strong>. Terdapat pergeseran tren waktu kedatangan pelanggan.`;
+    } else if (prevPeak !== null) {
+      timeText += `<br><br>📊 <em>Bulan Lalu:</em> Puncak jam makan stabil di jam yang sama. Persiapan staf sudah bisa diprediksi.`;
+    }
+  }
+
   document.getElementById('insightTime').innerHTML = timeText;
 
   // 2. Product Prediction & Bundling
@@ -204,11 +231,20 @@ function generateInsights(data, cabang) {
     const top1 = data.topMenu[0].menu;
     const top2 = data.topMenu[1].menu;
     const isTaichan = top1.toLowerCase().includes('taichan') || top1.toLowerCase().includes('sate');
-    productText = `Menu "Bintang" saat ini adalah <strong>${top1}</strong> dan <strong>${top2}</strong>. `;
+    productText = `Menu "Bintang" bulan ini adalah <strong>${top1}</strong> dan <strong>${top2}</strong>. `;
     if (isTaichan) {
-      productText += 'Masyarakat Makassar menyukai cita rasa pedas gurih, namun butuh penetral. Prediksi: Buat <strong>Paket Bundling</strong> (Sate Taichan + Minuman Manis Laris) untuk <i>upselling</i> otomatis per struk.';
+      productText += 'Masyarakat Makassar menyukai cita rasa pedas gurih, namun butuh penetral. Prediksi: Buat <strong>Paket Makan Bundling</strong> (Sate Taichan + Minuman Manis Laris) untuk <i>upselling</i> otomatis per meja.';
     } else {
-      productText += 'Prediksi Bisnis: Buat paket bundling kedua menu ini dengan harga coret untuk mendongkrak omzet harian.';
+      productText += 'Prediksi Bisnis: Buat paket bundling kedua menu ini dengan harga spesial untuk mendongkrak omzet harian.';
+    }
+
+    if (prevData && prevData.topMenu && prevData.topMenu.length > 0) {
+      const prevTop1 = prevData.topMenu[0].menu;
+      if (top1 !== prevTop1) {
+        productText += `<br><br>📈 <em>Bulan Lalu:</em> Menu terlaris adalah <strong>${prevTop1}</strong>. Terjadi pergeseran selera masakan yang perlu diperhatikan persediaan bahannya.`;
+      } else {
+        productText += `<br><br>📈 <strong>${top1}</strong> berhasil mempertahankan posisi menu terlaris dari bulan sebelumnya. Pastikan stok selalu aman!`;
+      }
     }
   }
   document.getElementById('insightProduct').innerHTML = productText;
@@ -229,18 +265,30 @@ function generateInsights(data, cabang) {
   if (topPayment) {
     const isEwallet = topPayment.toLowerCase().includes('qris') || topPayment.toLowerCase().includes('gopay') || topPayment.toLowerCase().includes('ovo') || topPayment.toLowerCase().includes('shopee');
     if (isEwallet) {
-      businessText += `Mayoritas pelanggan (gen-Z/milenial) menggunakan <strong>${topPayment}</strong>. Keputusan: Pasang banner promo QRIS/Cashback di meja kasir. `;
+      businessText += `Mayoritas pengunjung menggunakan <strong>${topPayment}</strong>. Keputusan: Pasang banner promo QRIS/Cashback di meja kasir. `;
     } else {
       businessText += `Metode pembayaran teratas adalah <strong>${topPayment}</strong>. Pastikan kelancaran sistem ini di kasir. `;
+    }
+  }
+
+  if (prevData && data.totalSales && prevData.totalSales > 0) {
+    const currentSales = data.totalSales;
+    const prevSales = prevData.totalSales;
+    const diff = currentSales - prevSales;
+    const pct = (diff / prevSales * 100).toFixed(1);
+    if (diff > 0) {
+      businessText += `<br><br>💰 <em>Bulan ke Bulan:</em> Omzet naik <strong>+${pct}%</strong> dibanding bulan sebelumnya! Pertahankan kualitas rasa dan kecepatan layanan makanan.`;
+    } else {
+      businessText += `<br><br>📉 <em>Bulan ke Bulan:</em> Omzet turun <strong>${pct}%</strong> dibanding bulan sebelumnya. Evaluasi kembali strategi marketing dan paket promo makan di tempat.`;
     }
   }
 
   if (cabang.toLowerCase().includes('pettarani')) {
     businessText += '<br><br>📍 <em>Konteks AP. Pettarani:</em> Kawasan padat ruko/perkantoran. Opsi strategis: Luncurkan "Promo Maksi" (Makan Siang) khusus untuk menyasar karyawan di sekitar area.';
   } else if (cabang.toLowerCase().includes('mappanyukki')) {
-    businessText += '<br><br>📍 <em>Konteks Mappanyukki:</em> Titik nongkrong strategis. Keputusan: Pastikan area parkir nyaman/aman dari macet, dan perkuat *vibe* malam hari.';
+    businessText += '<br><br>📍 <em>Konteks Mappanyukki:</em> Titik kuliner strategis. Keputusan: Pastikan kenyamanan tempat duduk untuk makan bersama keluarga, kebersihan meja, dan area parkir memadai.';
   } else {
-    businessText += '<br><br>📍 <em>Opsi Skala Makassar:</em> Tren pesan-antar (Ojol) sangat tinggi. Tingkatkan kualitas kemasan (packaging) agar tetap hangat/aman walau macet di jalan raya.';
+    businessText += '<br><br>📍 <em>Opsi Skala Makassar:</em> Tren pesan-antar (Ojol) sangat tinggi. Tingkatkan kualitas kemasan makanan (packaging) agar tetap rapi, hangat, dan aman walau macet di jalan raya.';
   }
   
   document.getElementById('insightBusiness').innerHTML = businessText || 'Data belum cukup.';
