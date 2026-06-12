@@ -747,6 +747,17 @@ body::before {
   font-weight: 600;
 }
 
+.mini-chart-wrapper {
+  margin-top: 16px;
+  height: 90px;
+  width: 100%;
+  position: relative;
+}
+
+.insight-card-full .mini-chart-wrapper {
+  height: 120px;
+}
+
 @media (max-width: 1024px) {
   .insight-cards-container {
     grid-template-columns: 1fr;

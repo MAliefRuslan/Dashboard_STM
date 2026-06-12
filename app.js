@@ -6,6 +6,13 @@ let charts = {
   payment: null,
   topMenu: null
 };
+let miniCharts = {
+  time: null,
+  product: null,
+  business: null,
+  marketing: null,
+  instagram: null
+};
 
 // Formatters
 const formatCurrency = (value) => {
@@ -388,6 +395,128 @@ function generateInsights(data, cabang, month) {
   igText += `<strong>5. CTA (Call-to-Action) di Setiap Post:</strong> Pastikan setiap caption berakhir dengan CTA jelas. Contoh: <em>"Malam ini buka jam 16.00! Langsung ke Mappanyukki atau order via link di bio 🔥"</em>. Tambahkan link GoFood/GrabFood di bio Instagram.`;
 
   document.getElementById('insightInstagram').innerHTML = igText;
+
+  // -----------------------------------------
+  // Render Mini Charts for Insights
+  // -----------------------------------------
+  
+  const defaultOpts = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { enabled: false } },
+    scales: { x: { display: false }, y: { display: false } },
+    layout: { padding: 0 }
+  };
+
+  // 1. Mini Chart Time (Sparkline of hourly sales)
+  if (miniCharts.time) miniCharts.time.destroy();
+  if (data.hourlySales) {
+    const labels = Object.keys(data.hourlySales).map(h => `${h}:00`);
+    const values = Object.values(data.hourlySales);
+    const ctxTime = document.getElementById('miniChartTime').getContext('2d');
+    miniCharts.time = new Chart(ctxTime, {
+      type: 'line',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: values,
+          borderColor: '#38bdf8',
+          borderWidth: 2,
+          tension: 0.4,
+          pointRadius: 0
+        }]
+      },
+      options: defaultOpts
+    });
+  }
+
+  // 2. Mini Chart Product (Doughnut: Top 2 vs Others)
+  if (miniCharts.product) miniCharts.product.destroy();
+  if (data.topMenu && data.topMenu.length >= 2) {
+    const top2Sales = data.topMenu[0].total + data.topMenu[1].total;
+    const others = data.totalSales - top2Sales;
+    const ctxProd = document.getElementById('miniChartProduct').getContext('2d');
+    miniCharts.product = new Chart(ctxProd, {
+      type: 'doughnut',
+      data: {
+        labels: [data.topMenu[0].menu, data.topMenu[1].menu, 'Lainnya'],
+        datasets: [{
+          data: [data.topMenu[0].total, data.topMenu[1].total, others > 0 ? others : 0],
+          backgroundColor: ['#f59e0b', '#fbbf24', 'rgba(255,255,255,0.05)'],
+          borderWidth: 0,
+          cutout: '75%'
+        }]
+      },
+      options: { ...defaultOpts, plugins: { tooltip: { enabled: true } }, layout: { padding: 5 } }
+    });
+  }
+
+  // 3. Mini Chart Business (Bar: Prev Month vs Current Month)
+  if (miniCharts.business) miniCharts.business.destroy();
+  const ctxBiz = document.getElementById('miniChartBusiness').getContext('2d');
+  if (prevData) {
+    miniCharts.business = new Chart(ctxBiz, {
+      type: 'bar',
+      data: {
+        labels: [prevMonthName, month],
+        datasets: [{
+          data: [prevData.totalSales, data.totalSales],
+          backgroundColor: ['rgba(255,255,255,0.15)', '#10b981'],
+          borderRadius: 4
+        }]
+      },
+      options: { ...defaultOpts, scales: { x: { display: true, grid: {display: false}, ticks: {color: '#94a3b8'} }, y: { display: false } } }
+    });
+  } else {
+    miniCharts.business = new Chart(ctxBiz, {
+      type: 'bar',
+      data: {
+        labels: [month],
+        datasets: [{
+          data: [data.totalSales],
+          backgroundColor: ['#10b981'],
+          borderRadius: 4
+        }]
+      },
+      options: { ...defaultOpts, scales: { x: { display: true, grid: {display: false}, ticks: {color: '#94a3b8'} }, y: { display: false } } }
+    });
+  }
+
+  // 4. Mini Chart Marketing (Horizontal Bar: Avg Bill)
+  if (miniCharts.marketing) miniCharts.marketing.destroy();
+  const ctxMkt = document.getElementById('miniChartMarketing').getContext('2d');
+  miniCharts.marketing = new Chart(ctxMkt, {
+    type: 'bar',
+    data: {
+      labels: ['Avg Bill'],
+      datasets: [{
+        data: [avgBill],
+        backgroundColor: '#8b5cf6',
+        borderRadius: 4
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      ...defaultOpts,
+      scales: { x: { display: false, max: avgBill * 1.5 }, y: { display: false } }
+    }
+  });
+
+  // 5. Mini Chart Instagram (Pie: Takeaway vs Dine-in)
+  if (miniCharts.instagram) miniCharts.instagram.destroy();
+  const ctxIg = document.getElementById('miniChartInstagram').getContext('2d');
+  miniCharts.instagram = new Chart(ctxIg, {
+    type: 'pie',
+    data: {
+      labels: ['Takeaway/Ojol', 'Dine-In/Lainnya'],
+      datasets: [{
+        data: [takeawayPct, 100 - takeawayPct],
+        backgroundColor: ['#e1306c', 'rgba(255,255,255,0.05)'],
+        borderWidth: 0
+      }]
+    },
+    options: { ...defaultOpts, plugins: { tooltip: { enabled: true } }, layout: { padding: 10 } }
+  });
 }
 
 // Utility for animating number changes
