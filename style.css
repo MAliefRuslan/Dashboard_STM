@@ -416,9 +416,14 @@ body::before {
 }
 
 .section-header h2 {
-  font-size: 1rem;
+  font-size: 1.15rem;
   font-weight: 700;
   color: var(--text-primary);
+  background: linear-gradient(to right, #ffffff, #fca5a5);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
+  margin-right: 8px;
 }
 
 .visit-cards {
@@ -630,19 +635,43 @@ body::before {
 }
 
 .insight-card {
-  background: rgba(15, 23, 42, 0.4);
-  border: 1px solid rgba(245, 158, 11, 0.1);
-  border-radius: 12px;
-  padding: 20px;
+  background: linear-gradient(145deg, rgba(30, 8, 15, 0.8), rgba(20, 5, 10, 0.6));
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 24px;
   display: flex;
-  gap: 16px;
-  transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  gap: 20px;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Glass reflection effect */
+.insight-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.03), transparent);
+  transform: skewX(-20deg);
+  transition: all 0.7s ease;
 }
 
 .insight-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 25px -5px rgba(245, 158, 11, 0.1);
-  border-color: rgba(245, 158, 11, 0.3);
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 15px 30px -5px rgba(220, 38, 38, 0.15), 0 0 15px rgba(245, 158, 11, 0.05);
+  border-color: rgba(245, 158, 11, 0.2);
+  background: linear-gradient(145deg, rgba(40, 10, 20, 0.9), rgba(25, 6, 12, 0.7));
+}
+
+.insight-card:hover::before {
+  left: 200%;
 }
 
 .insight-icon {
@@ -687,15 +716,24 @@ body::before {
 
 .insight-card-full {
   grid-column: 1 / -1;
-  background: linear-gradient(135deg, rgba(131, 58, 180, 0.05), rgba(253, 29, 29, 0.03), rgba(252, 176, 69, 0.05));
-  border: 1px solid rgba(225, 48, 108, 0.2);
+  background: linear-gradient(145deg, rgba(35, 10, 20, 0.85), rgba(25, 5, 15, 0.7));
+  border: 1px solid rgba(225, 48, 108, 0.3);
+  border-top: 1px solid rgba(225, 48, 108, 0.5);
+}
+
+.insight-card-full:hover {
+  background: linear-gradient(145deg, rgba(45, 15, 25, 0.95), rgba(30, 8, 18, 0.8));
+  border-color: rgba(225, 48, 108, 0.5);
+  box-shadow: 0 15px 30px -5px rgba(225, 48, 108, 0.2), 0 0 15px rgba(253, 29, 29, 0.1);
 }
 
 .insight-content h3 {
-  font-size: 0.95rem;
-  color: var(--text-main);
-  margin-bottom: 8px;
-  font-weight: 600;
+  font-size: 1.05rem;
+  color: #ffffff;
+  margin-bottom: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
 }
 
 .insight-content p {
