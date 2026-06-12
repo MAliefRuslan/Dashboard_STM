@@ -351,7 +351,7 @@ function generateInsights(data, cabang, month) {
   if (cabang.toLowerCase().includes('pettarani')) {
     businessText += '<br><br>📍 <em>Taktik Cab. Pettarani:</em> Implementasikan promo "After Office Hour" (16.30-18.30). Siapkan media promosi berupa spanduk depan yang terlihat jelas oleh karyawan ruko yang pulang kerja, tawarkan tempat persinggahan nyaman anti-macet.';
   } else if (cabang.toLowerCase().includes('mappanyukki')) {
-    businessText += '<br><br>📍 <em>Taktik Cab. Mappanyukki:</em> Rancang program "Paket Nongkrong Malam" (di atas 21.00). Koordinasikan dengan tukang parkir setempat agar kapasitas kendaraan maksimal, dan evaluasi penambahan lampu penerangan area makan luar.';
+    businessText += '<br><br>📍 <em>Taktik Cab. Mappanyukki:</em> Fokuskan pada percepatan <em>table turnover</em> (rotasi meja) di atas jam 21.00. Hindari paket "nongkrong". Terapkan alur pesanan ekspres dan tawarkan "Paket Makan Cepat" agar pelanggan segera berganti. Pastikan koordinasi parkir berjalan cepat untuk mencegah kemacetan pengunjung.';
   } else {
     businessText += '<br><br>📍 <em>Taktik Operasional:</em> Rencanakan pengadaan *packaging* khusus pesan-antar skala besar dengan penahan panas (*thermal*) untuk memastikan standar kualitas pengiriman tetap kompetitif di jam-jam larut malam.';
   }
