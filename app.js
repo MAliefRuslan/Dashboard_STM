@@ -317,6 +317,67 @@ function generateInsights(data, cabang, month) {
   marketingText += `<strong>4. Promotion:</strong> Dominasi sistem transaksi digital (seperti QRIS) membuka peluang besar untuk kampanye *loyalty program* berbasis stempel digital (misal: "Beli 5 kali, gratis 1 porsi").`;
 
   document.getElementById('insightMarketing').innerHTML = marketingText;
+
+  // 5. Instagram Content Strategy (@satetaichanmappanyukki)
+  let igText = '';
+  const igHandle = '@satetaichanmappanyukki';
+
+  // Determine top menu for content focus
+  let contentFocusMenu = 'Sate Taichan';
+  let secondMenu = '';
+  if (data.topMenu && data.topMenu.length >= 2) {
+    contentFocusMenu = data.topMenu[0].menu;
+    secondMenu = data.topMenu[1].menu;
+  }
+
+  // Determine peak hour for posting schedule
+  let bestPostHour = '17:00';
+  let peakLabel = 'sore';
+  if (data.hourlySales && data.hourlySales.length > 0) {
+    const peakEntry = data.hourlySales.reduce((a, b) => a.total > b.total ? a : b);
+    const peakHr = parseInt(peakEntry.hour);
+    // Post 2 hours before peak to build anticipation
+    const postHr = peakHr >= 2 ? peakHr - 2 : peakHr;
+    bestPostHour = postHr.toString().padStart(2, '0') + ':00';
+    if (peakHr >= 19) peakLabel = 'malam';
+    else if (peakHr >= 16) peakLabel = 'sore';
+  }
+
+  // Calculate takeaway ratio for content angle
+  let takeawayPct = 0;
+  if (data.visitPurpose) {
+    const totalVisit = data.visitPurpose.reduce((s, v) => s + v.count, 0);
+    const takeaway = data.visitPurpose.find(v => v.type && (v.type.toLowerCase().includes('take') || v.type.toLowerCase().includes('ojol') || v.type.toLowerCase().includes('grab') || v.type.toLowerCase().includes('gofood')));
+    if (takeaway && totalVisit > 0) {
+      takeawayPct = Math.round((takeaway.count / totalVisit) * 100);
+    }
+  }
+
+  igText += `<strong>📱 Audit Konten ${igHandle}:</strong><br><br>`;
+
+  igText += `<strong>1. Konten Unggulan (AIDA - Attention):</strong> Buat video ASMR proses <em>pembakaran ${contentFocusMenu}</em> dengan angle close-up. Konten jenis ini mendominasi tren FoodTok Makassar dan berpotensi viral karena visual api + suara sizzling yang menggugah selera.`;
+  if (secondMenu) {
+    igText += ` Selang-seling juga dengan konten <em>${secondMenu}</em> agar feed bervariasi.`;
+  }
+  igText += `<br><br>`;
+
+  igText += `<strong>2. Jadwal Posting Optimal:</strong> Berdasarkan data penjualan, peak hour Anda berada di waktu <em>${peakLabel}</em>. Posting konten Instagram Reels/Stories pada pukul <strong>${bestPostHour} WITA</strong> (± 2 jam sebelum jam ramai) agar audiens sudah "lapar mata" sebelum datang ke tempat.<br><br>`;
+
+  igText += `<strong>3. Konten Rutin yang Wajib Ada (Kalender Mingguan):</strong><br>`;
+  igText += `&nbsp;&nbsp;• <em>Senin:</em> Behind-the-scene persiapan bahan segar (bangun trust & transparansi)<br>`;
+  igText += `&nbsp;&nbsp;• <em>Rabu:</em> Repost UGC (User Generated Content) dari pelanggan yang nge-tag ${igHandle}<br>`;
+  igText += `&nbsp;&nbsp;• <em>Jumat:</em> Promo weekend atau teaser menu spesial malam Sabtu<br>`;
+  igText += `&nbsp;&nbsp;• <em>Sabtu:</em> Instagram Reels ASMR / Cinematic food video<br><br>`;
+
+  if (takeawayPct > 30) {
+    igText += `<strong>4. Insight Takeaway (${takeawayPct}% transaksi):</strong> Karena hampir sepertiga transaksi dari pesan antar, buat konten khusus <em>"Unboxing dari rumah"</em> — tunjukkan bahwa packaging tetap rapi & sate tetap hangat walau diantar lewat Ojol. Ini sangat efektif untuk mendorong konversi order online.<br><br>`;
+  } else {
+    igText += `<strong>4. Ajakan Dine-in:</strong> Karena mayoritas transaksi adalah makan di tempat, buat konten yang menunjukkan <em>suasana restoran yang ramai & nyaman</em> (social proof) agar calon pelanggan yang ragu langsung terdorong datang.<br><br>`;
+  }
+
+  igText += `<strong>5. CTA (Call-to-Action) di Setiap Post:</strong> Pastikan setiap caption berakhir dengan CTA jelas. Contoh: <em>"Malam ini buka jam 16.00! Langsung ke Mappanyukki atau order via link di bio 🔥"</em>. Tambahkan link GoFood/GrabFood di bio Instagram.`;
+
+  document.getElementById('insightInstagram').innerHTML = igText;
 }
 
 // Utility for animating number changes

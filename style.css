@@ -679,6 +679,17 @@ body::before {
   color: #8b5cf6;
 }
 
+.instagram-icon {
+  background: linear-gradient(135deg, rgba(131, 58, 180, 0.15), rgba(253, 29, 29, 0.15), rgba(252, 176, 69, 0.15));
+  color: #e1306c;
+}
+
+.insight-card-full {
+  grid-column: 1 / -1;
+  background: linear-gradient(135deg, rgba(131, 58, 180, 0.05), rgba(253, 29, 29, 0.03), rgba(252, 176, 69, 0.05));
+  border: 1px solid rgba(225, 48, 108, 0.2);
+}
+
 .insight-content h3 {
   font-size: 0.95rem;
   color: var(--text-main);
