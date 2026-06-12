@@ -564,6 +564,7 @@ function generateInsights(data, cabang, month) {
       labels: ['Avg Bill'],
       datasets: [
         {
+          label: 'Avg Bill Saat Ini',
           data: [avgBill],
           backgroundColor: '#a855f7',
           borderRadius: 4,
@@ -571,6 +572,7 @@ function generateInsights(data, cabang, month) {
           borderColor: '#d8b4fe'
         },
         {
+          label: 'Target Upsell (+50%)',
           data: [avgBill * 0.5],
           backgroundColor: 'rgba(255,255,255,0.1)',
           borderRadius: 4
@@ -579,11 +581,17 @@ function generateInsights(data, cabang, month) {
     },
     options: {
       indexAxis: 'y',
-      ...defaultOpts,
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { 
+        legend: { display: true, position: 'bottom', labels: { color: '#ccc', font: { size: 10 }, boxWidth: 12 } },
+        tooltip: { enabled: true } 
+      },
       scales: { 
         x: { display: false, stacked: true }, 
         y: { display: false, stacked: true } 
-      }
+      },
+      layout: { padding: { bottom: 5 } }
     }
   });
 
@@ -600,7 +608,15 @@ function generateInsights(data, cabang, month) {
         borderWidth: 0
       }]
     },
-    options: { ...defaultOpts, plugins: { tooltip: { enabled: true } }, layout: { padding: 10 } }
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { 
+        legend: { display: true, position: 'right', labels: { color: '#ccc', font: { size: 10 }, boxWidth: 12, padding: 10 } },
+        tooltip: { enabled: true } 
+      },
+      layout: { padding: 0 }
+    }
   });
 
   // ==========================================================
