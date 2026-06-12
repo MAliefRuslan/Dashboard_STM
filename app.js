@@ -35,9 +35,7 @@ const elements = {
   kpiVisitTypes: document.getElementById('kpiVisitTypes'),
   visitCards: document.getElementById('visitCards'),
   lastUpdate: document.getElementById('lastUpdate'),
-  loadingOverlay: document.getElementById('loadingOverlay'),
-  sidebar: document.getElementById('sidebar'),
-  sidebarOverlay: document.getElementById('sidebarOverlay')
+  loadingOverlay: document.getElementById('loadingOverlay')
 };
 
 // Init Application
@@ -98,9 +96,11 @@ function resetFilters() {
   updateDashboard();
 }
 
-function toggleSidebar() {
-  elements.sidebar.classList.toggle('open');
-  elements.sidebarOverlay.classList.toggle('active');
+function toggleMobileMenu() {
+  const menu = document.getElementById('navbarMenu');
+  if (menu) {
+    menu.classList.toggle('show');
+  }
 }
 
 function showLoading() {

@@ -13,66 +13,56 @@
 </head>
 <body>
   <div class="app">
-    <!-- Sidebar -->
-    <aside class="sidebar" id="sidebar">
-      <div class="sidebar-header">
+    <!-- Top Navbar -->
+    <nav class="top-navbar" id="topNavbar">
+      <div class="navbar-left">
         <div class="logo">
           <div class="logo-icon">
             <img src="logo.jpeg?v=20260531" class="logo-img" alt="Logo">
           </div>
           <div class="logo-text">
-            <span class="logo-title">Sate Taichan Mappanyukki</span>
+            <span class="logo-title">Sate Taichan</span>
             <span class="logo-subtitle">Sales Dashboard</span>
           </div>
         </div>
       </div>
+      
+      <div class="navbar-right" id="navbarMenu">
+        <div class="navbar-filters">
+          <div class="filter-group">
+            <label for="filterCabang">Cabang</label>
+            <select id="filterCabang"></select>
+          </div>
 
-      <div class="sidebar-filters">
-        <h3 class="filter-heading">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
-          </svg>
-          Filter Data
-        </h3>
+          <div class="filter-group">
+            <label for="filterMonth">Bulan</label>
+            <select id="filterMonth"></select>
+          </div>
 
-        <div class="filter-group">
-          <label for="filterCabang">Cabang</label>
-          <select id="filterCabang"></select>
+          <button class="btn-reset" id="btnReset" onclick="resetFilters()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+              <polyline points="1 4 1 10 7 10"/>
+              <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+            </svg>
+            Reset
+          </button>
         </div>
-
-        <div class="filter-group">
-          <label for="filterMonth">Bulan</label>
-          <select id="filterMonth"></select>
+        <div class="navbar-info">
+          <span id="lastUpdate">Updated: -</span>
         </div>
-
-        <button class="btn-reset" id="btnReset" onclick="resetFilters()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
-            <polyline points="1 4 1 10 7 10"/>
-            <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
-          </svg>
-          Reset Filter
-        </button>
       </div>
 
-      <div class="sidebar-footer">
-        <p>Data: Master_Data.xlsx</p>
-        <p id="lastUpdate">Updated: -</p>
-      </div>
-    </aside>
+      <button class="menu-toggle" id="menuToggle" onclick="toggleMobileMenu()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
+          <line x1="3" y1="12" x2="21" y2="12"/>
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </nav>
 
     <!-- Main Content -->
     <main class="main-content">
-      <!-- Mobile Header -->
-      <header class="mobile-header">
-        <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="24" height="24">
-            <line x1="3" y1="12" x2="21" y2="12"/>
-            <line x1="3" y1="6" x2="21" y2="6"/>
-            <line x1="3" y1="18" x2="21" y2="18"/>
-          </svg>
-        </button>
-        <h1 class="page-title">Dashboard Penjualan</h1>
-      </header>
 
       <!-- Loading Overlay -->
       <div class="loading-overlay" id="loadingOverlay">
@@ -257,9 +247,6 @@
       </section>
     </main>
   </div>
-
-  <!-- Overlay for mobile sidebar -->
-  <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
   <script src="app.js"></script>
 </body>
