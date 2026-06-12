@@ -140,6 +140,52 @@
         <div class="visit-cards" id="visitCards"></div>
       </section>
 
+      <!-- Charts Row 1: Daily & Hourly Sales -->
+      <section class="charts-row">
+        <div class="chart-card chart-large">
+          <div class="chart-header">
+            <h2>Penjualan Harian</h2>
+            <span class="chart-badge">Per Tanggal</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chartDaily"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card chart-large">
+          <div class="chart-header">
+            <h2>Penjualan Per Jam</h2>
+            <span class="chart-badge">Per Hour</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chartHourly"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- Charts Row 2: Payment Method & Top Menu -->
+      <section class="charts-row">
+        <div class="chart-card chart-medium">
+          <div class="chart-header">
+            <h2>Metode Pembayaran</h2>
+            <span class="chart-badge">Payment Method</span>
+          </div>
+          <div class="chart-wrapper chart-pie-wrapper">
+            <canvas id="chartPayment"></canvas>
+          </div>
+        </div>
+
+        <div class="chart-card chart-large">
+          <div class="chart-header">
+            <h2>Top 10 Menu Terlaris</h2>
+            <span class="chart-badge">By Total</span>
+          </div>
+          <div class="chart-wrapper">
+            <canvas id="chartTopMenu"></canvas>
+          </div>
+        </div>
+      </section>
+    
       <!-- Smart Business Insights -->
       <section class="insights-section" id="insightsSection">
         <div class="section-header">
@@ -209,52 +255,6 @@
               <h3>Strategi Konten Instagram @satetaichanmappanyukki</h3>
               <p id="insightInstagram">Memuat data...</p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Charts Row 1: Daily & Hourly Sales -->
-      <section class="charts-row">
-        <div class="chart-card chart-large">
-          <div class="chart-header">
-            <h2>Penjualan Harian</h2>
-            <span class="chart-badge">Per Tanggal</span>
-          </div>
-          <div class="chart-wrapper">
-            <canvas id="chartDaily"></canvas>
-          </div>
-        </div>
-
-        <div class="chart-card chart-large">
-          <div class="chart-header">
-            <h2>Penjualan Per Jam</h2>
-            <span class="chart-badge">Per Hour</span>
-          </div>
-          <div class="chart-wrapper">
-            <canvas id="chartHourly"></canvas>
-          </div>
-        </div>
-      </section>
-
-      <!-- Charts Row 2: Payment Method & Top Menu -->
-      <section class="charts-row">
-        <div class="chart-card chart-medium">
-          <div class="chart-header">
-            <h2>Metode Pembayaran</h2>
-            <span class="chart-badge">Payment Method</span>
-          </div>
-          <div class="chart-wrapper chart-pie-wrapper">
-            <canvas id="chartPayment"></canvas>
-          </div>
-        </div>
-
-        <div class="chart-card chart-large">
-          <div class="chart-header">
-            <h2>Top 10 Menu Terlaris</h2>
-            <span class="chart-badge">By Total</span>
-          </div>
-          <div class="chart-wrapper">
-            <canvas id="chartTopMenu"></canvas>
           </div>
         </div>
       </section>
