@@ -127,6 +127,7 @@ function updateDashboard() {
   
   updateKPIs(data);
   updateVisitPurpose(data);
+  generateInsights(data, cabang);
   renderCharts(data);
 }
 
@@ -169,6 +170,80 @@ function updateVisitPurpose(data) {
   if (sorted.length === 0) {
     elements.visitCards.innerHTML = '<p style="color: var(--text-muted); grid-column: 1/-1; text-align: center;">Tidak ada data</p>';
   }
+}
+
+// AI Insights Generator (Makassar F&B Context)
+function generateInsights(data, cabang) {
+  // 1. Time Analysis
+  let peakHour = null;
+  let maxSales = 0;
+  if (data.hourlySales) {
+    for (const [hour, sales] of Object.entries(data.hourlySales)) {
+      if (sales > maxSales) {
+        maxSales = sales;
+        peakHour = parseInt(hour, 10);
+      }
+    }
+  }
+
+  let timeText = 'Data belum cukup.';
+  if (peakHour !== null) {
+    const isNight = peakHour >= 18 || peakHour <= 2;
+    timeText = `Jam tersibuk adalah pukul <strong>${String(peakHour).padStart(2, '0')}:00 - ${String(peakHour + 1).padStart(2, '0')}:00</strong>. `;
+    if (isNight) {
+      timeText += 'Sangat cocok dengan tren nongkrong malam Makassar. Rekomendasi: Adakan <em>Midnight Promo</em> atau hadirkan <em>Live Music</em> untuk menahan customer <i>stay</i> lebih lama dan menambah pesanan.';
+    } else {
+      timeText += 'Puncak traffic berada di siang/sore hari. Fokuskan kecepatan pelayanan staf dan pastikan bahan baku aman untuk menghadapi lonjakan.';
+    }
+  }
+  document.getElementById('insightTime').innerHTML = timeText;
+
+  // 2. Product Prediction & Bundling
+  let productText = 'Data belum cukup.';
+  if (data.topMenu && data.topMenu.length >= 2) {
+    const top1 = data.topMenu[0].menu;
+    const top2 = data.topMenu[1].menu;
+    const isTaichan = top1.toLowerCase().includes('taichan') || top1.toLowerCase().includes('sate');
+    productText = `Menu "Bintang" saat ini adalah <strong>${top1}</strong> dan <strong>${top2}</strong>. `;
+    if (isTaichan) {
+      productText += 'Masyarakat Makassar menyukai cita rasa pedas gurih, namun butuh penetral. Prediksi: Buat <strong>Paket Bundling</strong> (Sate Taichan + Minuman Manis Laris) untuk <i>upselling</i> otomatis per struk.';
+    } else {
+      productText += 'Prediksi Bisnis: Buat paket bundling kedua menu ini dengan harga coret untuk mendongkrak omzet harian.';
+    }
+  }
+  document.getElementById('insightProduct').innerHTML = productText;
+
+  // 3. Business Decision & Location Context
+  let businessText = '';
+  let topPayment = null;
+  let maxPay = 0;
+  if (data.paymentMethod) {
+    for (const [method, count] of Object.entries(data.paymentMethod)) {
+      if (count > maxPay) {
+        maxPay = count;
+        topPayment = method;
+      }
+    }
+  }
+
+  if (topPayment) {
+    const isEwallet = topPayment.toLowerCase().includes('qris') || topPayment.toLowerCase().includes('gopay') || topPayment.toLowerCase().includes('ovo') || topPayment.toLowerCase().includes('shopee');
+    if (isEwallet) {
+      businessText += `Mayoritas pelanggan (gen-Z/milenial) menggunakan <strong>${topPayment}</strong>. Keputusan: Pasang banner promo QRIS/Cashback di meja kasir. `;
+    } else {
+      businessText += `Metode pembayaran teratas adalah <strong>${topPayment}</strong>. Pastikan kelancaran sistem ini di kasir. `;
+    }
+  }
+
+  if (cabang.toLowerCase().includes('pettarani')) {
+    businessText += '<br><br>📍 <em>Konteks AP. Pettarani:</em> Kawasan padat ruko/perkantoran. Opsi strategis: Luncurkan "Promo Maksi" (Makan Siang) khusus untuk menyasar karyawan di sekitar area.';
+  } else if (cabang.toLowerCase().includes('mappanyukki')) {
+    businessText += '<br><br>📍 <em>Konteks Mappanyukki:</em> Titik nongkrong strategis. Keputusan: Pastikan area parkir nyaman/aman dari macet, dan perkuat *vibe* malam hari.';
+  } else {
+    businessText += '<br><br>📍 <em>Opsi Skala Makassar:</em> Tren pesan-antar (Ojol) sangat tinggi. Tingkatkan kualitas kemasan (packaging) agar tetap hangat/aman walau macet di jalan raya.';
+  }
+  
+  document.getElementById('insightBusiness').innerHTML = businessText || 'Data belum cukup.';
 }
 
 // Utility for animating number changes
