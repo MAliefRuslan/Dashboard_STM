@@ -25,21 +25,24 @@ const formatCompactCurrency = (value) => {
   }).format(value);
 };
 
-// DOM Elements
-const elements = {
-  filterCabang: document.getElementById('filterCabang'),
-  filterMonth: document.getElementById('filterMonth'),
-  kpiRevenue: document.getElementById('kpiRevenue'),
-  kpiBills: document.getElementById('kpiBills'),
-  kpiAvg: document.getElementById('kpiAvg'),
-  kpiVisitTypes: document.getElementById('kpiVisitTypes'),
-  visitCards: document.getElementById('visitCards'),
-  lastUpdate: document.getElementById('lastUpdate'),
-  loadingOverlay: document.getElementById('loadingOverlay')
-};
+// DOM Elements (initialized in init())
+let elements = {};
 
 // Init Application
 async function init() {
+  // Initialize DOM elements after DOM is ready
+  elements = {
+    filterCabang: document.getElementById('filterCabang'),
+    filterMonth: document.getElementById('filterMonth'),
+    kpiRevenue: document.getElementById('kpiRevenue'),
+    kpiBills: document.getElementById('kpiBills'),
+    kpiAvg: document.getElementById('kpiAvg'),
+    kpiVisitTypes: document.getElementById('kpiVisitTypes'),
+    visitCards: document.getElementById('visitCards'),
+    lastUpdate: document.getElementById('lastUpdate'),
+    loadingOverlay: document.getElementById('loadingOverlay')
+  };
+
   try {
     showLoading();
     
@@ -104,12 +107,12 @@ function toggleMobileMenu() {
 }
 
 function showLoading() {
-  elements.loadingOverlay.classList.remove('hidden');
+  if (elements.loadingOverlay) elements.loadingOverlay.classList.remove('hidden');
 }
 
 function hideLoading() {
   setTimeout(() => {
-    elements.loadingOverlay.classList.add('hidden');
+    if (elements.loadingOverlay) elements.loadingOverlay.classList.add('hidden');
   }, 300); // small delay for smoother transition
 }
 

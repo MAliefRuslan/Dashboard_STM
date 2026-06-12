@@ -9,6 +9,7 @@
   --bg-card-hover: rgba(70, 12, 28, 0.9);
   --bg-glass: rgba(255, 255, 255, 0.03);
   --bg-sidebar: rgba(48, 6, 17, 0.98);
+  --card-bg: #1f0b0b;
 
   /* Accent Colors */
   --accent-primary: #dc2626; /* red-600 */
@@ -32,6 +33,7 @@
   --text-secondary: #cbd5e1;
   --text-muted: #94a3b8;
   --text-accent: #f87171;
+  --text-main: #f8fafc;
 
   /* Borders */
   --border-color: rgba(252, 165, 165, 0.1);
@@ -48,7 +50,6 @@
   --radius-md: 12px;
   --radius-lg: 16px;
   --radius-xl: 20px;
-  --card-bg: #1f0b0b;
 
   /* Transitions */
   --transition-fast: 0.15s ease;
