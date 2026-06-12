@@ -178,11 +178,12 @@ const MONTH_ORDER = ['January', 'February', 'March', 'April', 'May', 'June', 'Ju
 function generateInsights(data, cabang, month) {
   // Get Previous Data for MoM
   let prevData = null;
+  let prevMonthName = null;
   if (month !== 'Semua Bulan') {
     const monthIdx = MONTH_ORDER.indexOf(month);
     if (monthIdx > 0) {
-      const prevMonth = MONTH_ORDER[monthIdx - 1];
-      const prevKey = `${cabang}|${prevMonth}`;
+      prevMonthName = MONTH_ORDER[monthIdx - 1];
+      const prevKey = `${cabang}|${prevMonthName}`;
       prevData = dashboardData.data[prevKey];
     }
   }
@@ -218,9 +219,9 @@ function generateInsights(data, cabang, month) {
       if (sales > prevMax) { prevMax = sales; prevPeak = parseInt(hour, 10); }
     }
     if (prevPeak !== null && prevPeak !== peakHour) {
-      timeText += `<br><br>📊 <em>Bulan Lalu:</em> Puncak jam makan ada di <strong>${String(prevPeak).padStart(2, '0')}:00</strong>. Terdapat pergeseran tren waktu kedatangan pelanggan.`;
+      timeText += `<br><br>📊 <em>Bulan ${prevMonthName}:</em> Puncak jam makan ada di <strong>${String(prevPeak).padStart(2, '0')}:00</strong>. Terdapat pergeseran tren waktu kedatangan pelanggan di bulan ${month}.`;
     } else if (prevPeak !== null) {
-      timeText += `<br><br>📊 <em>Bulan Lalu:</em> Puncak jam makan stabil di jam yang sama. Persiapan staf sudah bisa diprediksi.`;
+      timeText += `<br><br>📊 <em>Bulan ${prevMonthName}:</em> Puncak jam makan stabil di jam yang sama. Persiapan staf sudah bisa diprediksi untuk bulan ${month}.`;
     }
   }
 
@@ -242,9 +243,9 @@ function generateInsights(data, cabang, month) {
     if (prevData && prevData.topMenu && prevData.topMenu.length > 0) {
       const prevTop1 = prevData.topMenu[0].menu;
       if (top1 !== prevTop1) {
-        productText += `<br><br>📈 <em>Bulan Lalu:</em> Menu terlaris adalah <strong>${prevTop1}</strong>. Terjadi pergeseran selera masakan yang perlu diperhatikan persediaan bahannya.`;
+        productText += `<br><br>📈 <em>Bulan ${prevMonthName}:</em> Menu terlaris adalah <strong>${prevTop1}</strong>. Terjadi pergeseran selera masakan di bulan ${month} yang perlu diperhatikan persediaan bahannya.`;
       } else {
-        productText += `<br><br>📈 <strong>${top1}</strong> berhasil mempertahankan posisi menu terlaris dari bulan sebelumnya. Pastikan stok selalu aman!`;
+        productText += `<br><br>📈 <strong>${top1}</strong> berhasil mempertahankan posisi menu terlaris dari bulan ${prevMonthName}. Pastikan stok selalu aman!`;
       }
     }
   }
@@ -278,9 +279,9 @@ function generateInsights(data, cabang, month) {
     const diff = currentSales - prevSales;
     const pct = (diff / prevSales * 100).toFixed(1);
     if (diff > 0) {
-      businessText += `<br><br>💰 <em>Bulan ke Bulan:</em> Omzet naik <strong>+${pct}%</strong> dibanding bulan sebelumnya! Pertahankan kualitas rasa dan kecepatan layanan makanan.`;
+      businessText += `<br><br>💰 <em>${prevMonthName} ke ${month}:</em> Omzet naik <strong>+${pct}%</strong>! Pertahankan kualitas rasa dan kecepatan layanan makanan.`;
     } else {
-      businessText += `<br><br>📉 <em>Bulan ke Bulan:</em> Omzet turun <strong>${pct}%</strong> dibanding bulan sebelumnya. Evaluasi kembali strategi marketing dan paket promo makan di tempat.`;
+      businessText += `<br><br>📉 <em>${prevMonthName} ke ${month}:</em> Omzet turun <strong>${pct}%</strong> dibanding bulan ${prevMonthName}. Evaluasi kembali strategi marketing dan paket promo makan di tempat.`;
     }
   }
 
