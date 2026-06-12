@@ -342,11 +342,11 @@ function generateInsights(data, cabang, month) {
   }
 
   if (cabang.toLowerCase().includes('pettarani')) {
-    businessText += '<br><br>📍 <em>Konteks AP. Pettarani:</em> Kawasan padat ruko/perkantoran. Opsi strategis: Luncurkan "Promo Maksi" (Makan Siang) khusus untuk menyasar karyawan di sekitar area.';
+    businessText += '<br><br>📍 <em>Konteks AP. Pettarani:</em> Kawasan perkantoran sibuk. Mengingat jam operasional (16.00-00.00), luncurkan promo "After Office Hour" atau "Paket Pulang Kerja" (16.30-18.30) untuk menarik karyawan yang sedang bersantai sambil menunggu macet reda.';
   } else if (cabang.toLowerCase().includes('mappanyukki')) {
-    businessText += '<br><br>📍 <em>Konteks Mappanyukki:</em> Titik kuliner strategis. Keputusan: Pastikan kenyamanan tempat duduk untuk makan bersama keluarga, kebersihan meja, dan area parkir memadai.';
+    businessText += '<br><br>📍 <em>Konteks Mappanyukki:</em> Titik kuliner malam strategis. Keputusan: Tawarkan "Paket Nongkrong Malam" atau promo "Late Night Snack" (di atas jam 21.00), serta pastikan pencahayaan dan area parkir memadai untuk kenyamanan pengunjung malam.';
   } else {
-    businessText += '<br><br>📍 <em>Opsi Skala Makassar:</em> Tren pesan-antar (Ojol) sangat tinggi. Tingkatkan kualitas kemasan makanan (packaging) agar tetap rapi, hangat, dan aman walau macet di jalan raya.';
+    businessText += '<br><br>📍 <em>Opsi Skala Makassar:</em> Fokus operasional di sore-malam hari. Tingkatkan penjualan dengan "Dinner Family Package" (19.00-21.00) dan pastikan kualitas kemasan pesan-antar (Ojol) tetap hangat untuk pesanan larut malam.';
   }
   
   document.getElementById('insightBusiness').innerHTML = businessText || 'Data belum cukup.';
