@@ -421,9 +421,11 @@ function generateInsights(data, cabang, month) {
         datasets: [{
           data: values,
           borderColor: '#38bdf8',
-          borderWidth: 2,
+          backgroundColor: 'rgba(56, 189, 248, 0.2)',
+          borderWidth: 3,
           tension: 0.4,
-          pointRadius: 0
+          pointRadius: 0,
+          fill: true
         }]
       },
       options: defaultOpts
@@ -442,9 +444,9 @@ function generateInsights(data, cabang, month) {
         labels: [data.topMenu[0].menu, data.topMenu[1].menu, 'Lainnya'],
         datasets: [{
           data: [data.topMenu[0].total, data.topMenu[1].total, others > 0 ? others : 0],
-          backgroundColor: ['#f59e0b', '#fbbf24', 'rgba(255,255,255,0.05)'],
+          backgroundColor: ['#f59e0b', '#fbbf24', 'rgba(255,255,255,0.2)'],
           borderWidth: 0,
-          cutout: '75%'
+          cutout: '70%'
         }]
       },
       options: { ...defaultOpts, plugins: { tooltip: { enabled: true } }, layout: { padding: 5 } }
@@ -461,7 +463,9 @@ function generateInsights(data, cabang, month) {
         labels: [prevMonthName, month],
         datasets: [{
           data: [prevData.totalSales, data.totalSales],
-          backgroundColor: ['rgba(255,255,255,0.15)', '#10b981'],
+          backgroundColor: ['rgba(255,255,255,0.3)', '#10b981'],
+          borderColor: ['rgba(255,255,255,0.6)', '#34d399'],
+          borderWidth: 1,
           borderRadius: 4
         }]
       },
@@ -489,16 +493,28 @@ function generateInsights(data, cabang, month) {
     type: 'bar',
     data: {
       labels: ['Avg Bill'],
-      datasets: [{
-        data: [avgBill],
-        backgroundColor: '#8b5cf6',
-        borderRadius: 4
-      }]
+      datasets: [
+        {
+          data: [avgBill],
+          backgroundColor: '#a855f7',
+          borderRadius: 4,
+          borderWidth: 1,
+          borderColor: '#d8b4fe'
+        },
+        {
+          data: [avgBill * 0.5],
+          backgroundColor: 'rgba(255,255,255,0.1)',
+          borderRadius: 4
+        }
+      ]
     },
     options: {
       indexAxis: 'y',
       ...defaultOpts,
-      scales: { x: { display: false, max: avgBill * 1.5 }, y: { display: false } }
+      scales: { 
+        x: { display: false, stacked: true }, 
+        y: { display: false, stacked: true } 
+      }
     }
   });
 
@@ -511,7 +527,7 @@ function generateInsights(data, cabang, month) {
       labels: ['Takeaway/Ojol', 'Dine-In/Lainnya'],
       datasets: [{
         data: [takeawayPct, 100 - takeawayPct],
-        backgroundColor: ['#e1306c', 'rgba(255,255,255,0.05)'],
+        backgroundColor: ['#e1306c', 'rgba(255,255,255,0.2)'],
         borderWidth: 0
       }]
     },
