@@ -11,8 +11,54 @@ let miniCharts = {
   product: null,
   business: null,
   marketing: null,
-  instagram: null
+  instagram: null,
+  predictive: null
 };
+
+// -----------------------------------------
+// Predictive Analytics (Linear Regression)
+// -----------------------------------------
+function calculateLinearRegression(values) {
+  const n = values.length;
+  if (n === 0) return 0;
+  if (n === 1) return values[0];
+  
+  let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+  for (let i = 0; i < n; i++) {
+    sumX += i;
+    sumY += values[i];
+    sumXY += i * values[i];
+    sumXX += i * i;
+  }
+  
+  const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+  const intercept = (sumY - slope * sumX) / n;
+  
+  // Predict the next value (index n)
+  return Math.max(0, slope * n + intercept); // Ensure prediction is not negative
+}
+
+// Generate historical data array for regression
+const ALL_MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+function getHistoricalSales(cabang, currentMonth) {
+  const dataMap = dashboardData.data;
+  const currentMonthIdx = ALL_MONTHS.indexOf(currentMonth);
+  if (currentMonthIdx <= 0) return []; // No previous history if January or 'Semua Bulan'
+  
+  let history = [];
+  for (let i = 0; i <= currentMonthIdx; i++) {
+    const key = `${cabang}|${ALL_MONTHS[i]}`;
+    if (dataMap[key] && dataMap[key].totalSales) {
+      history.push(dataMap[key].totalSales);
+    } else {
+      // Missing data handling (could interpolate, but here we just push 0 or skip)
+      // Since it's continuous, let's break if we encounter a gap before current month?
+      // Actually we know data is contiguous.
+      history.push(0); 
+    }
+  }
+  return history;
+}
 
 // Formatters
 const formatCurrency = (value) => {
@@ -533,6 +579,253 @@ function generateInsights(data, cabang, month) {
     },
     options: { ...defaultOpts, plugins: { tooltip: { enabled: true } }, layout: { padding: 10 } }
   });
+
+  // ==========================================================
+  // EXECUTIVE HIGHLIGHT & PREDICTIVE ANALYTICS
+  // ==========================================================
+
+  // --- Executive Highlight ---
+  const execEl = document.getElementById('executiveHighlight');
+  if (execEl) {
+    let execText = '';
+    const cabangLabel = cabang.replace('Cab.', 'Cabang ').replace('Cab. ', 'Cabang ');
+    
+    if (month === 'Semua Bulan') {
+      execText = `<strong>${cabangLabel}</strong> mencatatkan total omzet <strong>${formatCurrency(data.totalSales)}</strong> dari <strong>${formatNumber(data.totalBills)}</strong> struk sepanjang seluruh periode data. `;
+      execText += `Menu andalan adalah <strong>${data.topMenu && data.topMenu[0] ? data.topMenu[0].menu : '-'}</strong>. `;
+      execText += `Rata-rata pembelanjaan per struk: <strong>${formatCurrency(avgBill)}</strong>.`;
+    } else {
+      execText = `Performa <strong>${cabangLabel}</strong> pada bulan <strong>${month}</strong>: Total omzet <strong>${formatCurrency(data.totalSales)}</strong> dari <strong>${formatNumber(data.totalBills)}</strong> struk. `;
+      
+      if (prevData) {
+        const diff = data.totalSales - prevData.totalSales;
+        const diffPct = ((diff / prevData.totalSales) * 100).toFixed(1);
+        if (diff >= 0) {
+          execText += `📈 Terjadi <strong style="color:#10b981;">pertumbuhan +${diffPct}%</strong> dibanding bulan ${prevMonthName}. `;
+        } else {
+          execText += `📉 Terjadi <strong style="color:#ef4444;">penurunan ${diffPct}%</strong> dibanding bulan ${prevMonthName}. `;
+        }
+      }
+      
+      if (data.topMenu && data.topMenu[0]) {
+        execText += `Menu terlaris: <strong>${data.topMenu[0].menu}</strong>. `;
+      }
+      execText += `Rata-rata bill: <strong>${formatCurrency(avgBill)}</strong>.`;
+    }
+    execEl.innerHTML = `<p>${execText}</p>`;
+  }
+
+  // --- Predictive Analytics Chart ---
+  const predictiveTextEl = document.getElementById('insightPredictiveText');
+  const predictiveChartEl = document.getElementById('chartPredictive');
+  
+  if (predictiveTextEl && predictiveChartEl) {
+    if (miniCharts.predictive) miniCharts.predictive.destroy();
+    
+    if (month === 'Semua Bulan') {
+      // Show all months overview
+      const cabangKey = cabang;
+      let labels = [];
+      let values = [];
+      for (let i = 0; i < ALL_MONTHS.length; i++) {
+        const key = `${cabangKey}|${ALL_MONTHS[i]}`;
+        if (dashboardData.data[key] && dashboardData.data[key].totalSales) {
+          labels.push(ALL_MONTHS[i].substring(0, 3));
+          values.push(dashboardData.data[key].totalSales);
+        }
+      }
+      
+      if (values.length >= 2) {
+        const predicted = calculateLinearRegression(values);
+        const nextMonthIdx = labels.length < 12 ? labels.length : 11;
+        const nextMonthLabel = ALL_MONTHS[nextMonthIdx] ? ALL_MONTHS[nextMonthIdx].substring(0, 3) : 'Next';
+        
+        // Predicted data array (nulls for past, value for next)
+        const predictedData = new Array(values.length).fill(null);
+        predictedData[predictedData.length - 1] = values[values.length - 1]; // Connect from last real value
+        predictedData.push(predicted);
+        
+        const realData = [...values, null]; // Add null for the prediction month
+        labels.push(nextMonthLabel + ' (Est.)');
+        
+        const ctxPred = predictiveChartEl.getContext('2d');
+        miniCharts.predictive = new Chart(ctxPred, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Realisasi Omzet',
+                data: realData,
+                borderColor: '#38bdf8',
+                backgroundColor: 'rgba(56, 189, 248, 0.15)',
+                borderWidth: 3,
+                tension: 0.3,
+                pointRadius: 4,
+                pointBackgroundColor: '#38bdf8',
+                fill: true
+              },
+              {
+                label: 'Proyeksi (Regresi Linier)',
+                data: predictedData,
+                borderColor: '#d946ef',
+                borderWidth: 3,
+                borderDash: [8, 4],
+                tension: 0,
+                pointRadius: 6,
+                pointBackgroundColor: '#d946ef',
+                pointStyle: 'triangle',
+                fill: false
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: true,
+                position: 'top',
+                labels: { color: '#94a3b8', font: { size: 11 }, usePointStyle: true, padding: 16 }
+              },
+              tooltip: {
+                enabled: true,
+                callbacks: {
+                  label: function(ctx) {
+                    return ctx.dataset.label + ': ' + formatCurrency(ctx.raw);
+                  }
+                }
+              }
+            },
+            scales: {
+              x: { display: true, grid: { display: false }, ticks: { color: '#94a3b8' } },
+              y: {
+                display: true,
+                grid: { color: 'rgba(255,255,255,0.05)' },
+                ticks: {
+                  color: '#94a3b8',
+                  callback: function(v) { return formatCompactCurrency(v); }
+                }
+              }
+            }
+          }
+        });
+        
+        const diffPred = predicted - values[values.length - 1];
+        const diffPredPct = ((diffPred / values[values.length - 1]) * 100).toFixed(1);
+        let predText = `Berdasarkan <strong>regresi linier sederhana</strong> dari ${values.length} bulan data historis, `;
+        predText += `estimasi omzet untuk bulan <strong>${ALL_MONTHS[nextMonthIdx] || 'berikutnya'}</strong> adalah <strong style="color:#d946ef;">${formatCurrency(predicted)}</strong>. `;
+        if (diffPred >= 0) {
+          predText += `Ini menunjukkan potensi <strong style="color:#10b981;">kenaikan +${diffPredPct}%</strong> dari bulan terakhir.`;
+        } else {
+          predText += `Ini menunjukkan potensi <strong style="color:#ef4444;">penurunan ${diffPredPct}%</strong> dari bulan terakhir.`;
+        }
+        predText += `<br><br><em style="color:#94a3b8;font-size:0.85rem;">⚠️ Disclaimer: Angka proyeksi menggunakan model regresi linier sederhana dan merupakan estimasi tren matematis, bukan kepastian bisnis.</em>`;
+        predictiveTextEl.innerHTML = predText;
+      } else {
+        predictiveTextEl.innerHTML = '<em style="color:#94a3b8;">Diperlukan minimal 2 bulan data historis untuk menghasilkan proyeksi. Pilih cabang dengan data lebih lengkap.</em>';
+      }
+      
+    } else {
+      // Specific month selected
+      const history = getHistoricalSales(cabang, month);
+      
+      if (history.length >= 2) {
+        const predicted = calculateLinearRegression(history);
+        const currentMonthIdx = ALL_MONTHS.indexOf(month);
+        const nextMonthName = ALL_MONTHS[currentMonthIdx + 1] || 'Berikutnya';
+        
+        let labels = [];
+        for (let i = 0; i < history.length; i++) {
+          labels.push(ALL_MONTHS[i].substring(0, 3));
+        }
+        
+        const predictedData = new Array(history.length).fill(null);
+        predictedData[predictedData.length - 1] = history[history.length - 1];
+        predictedData.push(predicted);
+        
+        const realData = [...history, null];
+        labels.push(nextMonthName.substring(0, 3) + ' (Est.)');
+        
+        const ctxPred = predictiveChartEl.getContext('2d');
+        miniCharts.predictive = new Chart(ctxPred, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: 'Realisasi Omzet',
+                data: realData,
+                borderColor: '#38bdf8',
+                backgroundColor: 'rgba(56, 189, 248, 0.15)',
+                borderWidth: 3,
+                tension: 0.3,
+                pointRadius: 4,
+                pointBackgroundColor: '#38bdf8',
+                fill: true
+              },
+              {
+                label: 'Proyeksi (Regresi Linier)',
+                data: predictedData,
+                borderColor: '#d946ef',
+                borderWidth: 3,
+                borderDash: [8, 4],
+                tension: 0,
+                pointRadius: 6,
+                pointBackgroundColor: '#d946ef',
+                pointStyle: 'triangle',
+                fill: false
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: true,
+                position: 'top',
+                labels: { color: '#94a3b8', font: { size: 11 }, usePointStyle: true, padding: 16 }
+              },
+              tooltip: {
+                enabled: true,
+                callbacks: {
+                  label: function(ctx) {
+                    return ctx.dataset.label + ': ' + formatCurrency(ctx.raw);
+                  }
+                }
+              }
+            },
+            scales: {
+              x: { display: true, grid: { display: false }, ticks: { color: '#94a3b8' } },
+              y: {
+                display: true,
+                grid: { color: 'rgba(255,255,255,0.05)' },
+                ticks: {
+                  color: '#94a3b8',
+                  callback: function(v) { return formatCompactCurrency(v); }
+                }
+              }
+            }
+          }
+        });
+        
+        const diffPred = predicted - history[history.length - 1];
+        const diffPredPct = ((diffPred / history[history.length - 1]) * 100).toFixed(1);
+        let predText = `Berdasarkan <strong>regresi linier sederhana</strong> dari ${history.length} bulan data (Jan–${month.substring(0,3)}), `;
+        predText += `estimasi omzet untuk bulan <strong style="color:#d946ef;">${nextMonthName}</strong> adalah <strong style="color:#d946ef;">${formatCurrency(predicted)}</strong>. `;
+        if (diffPred >= 0) {
+          predText += `Proyeksi menunjukkan potensi <strong style="color:#10b981;">kenaikan +${diffPredPct}%</strong> dari bulan ${month}.`;
+        } else {
+          predText += `Proyeksi menunjukkan potensi <strong style="color:#ef4444;">penurunan ${diffPredPct}%</strong> dari bulan ${month}.`;
+        }
+        predText += `<br><br><em style="color:#94a3b8;font-size:0.85rem;">⚠️ Disclaimer: Angka proyeksi menggunakan model regresi linier sederhana dan merupakan estimasi tren matematis, bukan kepastian bisnis.</em>`;
+        predictiveTextEl.innerHTML = predText;
+      } else {
+        predictiveTextEl.innerHTML = '<em style="color:#94a3b8;">Diperlukan minimal 2 bulan data historis untuk menghasilkan proyeksi. Coba pilih bulan yang lebih lanjut (misal Maret ke atas).</em>';
+      }
+    }
+  }
 }
 
 // Utility for animating number changes

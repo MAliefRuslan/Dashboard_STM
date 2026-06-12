@@ -189,76 +189,75 @@
       <!-- Smart Business Insights -->
       <section class="insights-section" id="insightsSection">
         <div class="section-header">
-          <h2>Business Insights & Recommendations</h2>
-          <span class="chart-badge" style="background: rgba(245, 158, 11, 0.2); color: #fcd34d;">Makassar F&B Context</span>
+          <h2>Executive Summary: Performance & Outlook</h2>
+          <span class="chart-badge" style="background: rgba(245, 158, 11, 0.2); color: #fcd34d;">Data Analyst Report</span>
         </div>
-        <div class="insight-cards-container">
-          <div class="insight-card">
-            <div class="insight-icon time-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"></circle>
-                <polyline points="12 6 12 12 16 14"></polyline>
-              </svg>
+        
+        <div class="executive-highlight" id="executiveHighlight">
+          <p>Memuat ringkasan eksekutif...</p>
+        </div>
+
+        <div class="presentation-layout">
+          <!-- Slide 1: What Happened -->
+          <div class="presentation-panel">
+            <div class="panel-header">
+              <span class="panel-step">01</span>
+              <h3>What Happened?</h3>
             </div>
-            <div class="insight-content">
-              <h3>Analisis Waktu & Peak Hour</h3>
-              <p id="insightTime">Memuat data...</p>
-              <div class="mini-chart-wrapper"><canvas id="miniChartTime"></canvas></div>
-            </div>
-          </div>
-          
-          <div class="insight-card">
-            <div class="insight-icon product-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-              </svg>
-            </div>
-            <div class="insight-content">
-              <h3>Prediksi Produk & Bundling</h3>
-              <p id="insightProduct">Memuat data...</p>
-              <div class="mini-chart-wrapper"><canvas id="miniChartProduct"></canvas></div>
+            <div class="panel-body">
+              <div class="insight-block">
+                <h4>Analisis Waktu & Peak Hour</h4>
+                <p id="insightTime">Memuat data...</p>
+                <div class="mini-chart-wrapper"><canvas id="miniChartTime"></canvas></div>
+              </div>
+              <div class="insight-block mt-4">
+                <h4>Kinerja Produk Utama</h4>
+                <p id="insightProduct">Memuat data...</p>
+                <div class="mini-chart-wrapper"><canvas id="miniChartProduct"></canvas></div>
+              </div>
             </div>
           </div>
 
-          <div class="insight-card">
-            <div class="insight-icon business-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="12" y1="1" x2="12" y2="23"></line>
-                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-              </svg>
+          <!-- Slide 2: Why It Matters -->
+          <div class="presentation-panel">
+            <div class="panel-header">
+              <span class="panel-step">02</span>
+              <h3>Why It Matters?</h3>
             </div>
-            <div class="insight-content">
-              <h3>Keputusan Bisnis Strategis</h3>
-              <p id="insightBusiness">Memuat data...</p>
-              <div class="mini-chart-wrapper"><canvas id="miniChartBusiness"></canvas></div>
+            <div class="panel-body">
+              <div class="insight-block">
+                <h4>Keputusan Bisnis Strategis</h4>
+                <p id="insightBusiness">Memuat data...</p>
+                <div class="mini-chart-wrapper"><canvas id="miniChartBusiness"></canvas></div>
+              </div>
+              <div class="insight-block mt-4">
+                <h4>Analisis Tren Marketing</h4>
+                <p id="insightMarketing">Memuat data...</p>
+                <div class="mini-chart-wrapper"><canvas id="miniChartMarketing"></canvas></div>
+              </div>
+              <div class="insight-block mt-4">
+                <h4>Strategi Konten Instagram</h4>
+                <p id="insightInstagram">Memuat data...</p>
+                <div class="mini-chart-wrapper"><canvas id="miniChartInstagram"></canvas></div>
+              </div>
             </div>
           </div>
 
-          <div class="insight-card">
-            <div class="insight-icon marketing-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
-                <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
-              </svg>
+          <!-- Slide 3: What's Next (Predictive) -->
+          <div class="presentation-panel panel-predictive">
+            <div class="panel-header">
+              <span class="panel-step">03</span>
+              <h3>What's Next?</h3>
+              <span class="badge-ai">Predictive Model</span>
             </div>
-            <div class="insight-content">
-              <h3>Analisis Tren Marketing Makassar (4P)</h3>
-              <p id="insightMarketing">Memuat data...</p>
-              <div class="mini-chart-wrapper"><canvas id="miniChartMarketing"></canvas></div>
-            </div>
-          </div>
-          <div class="insight-card insight-card-full">
-            <div class="insight-icon instagram-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
-                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
-                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
-              </svg>
-            </div>
-            <div class="insight-content">
-              <h3>Strategi Konten Instagram @satetaichanmappanyukki</h3>
-              <p id="insightInstagram">Memuat data...</p>
-              <div class="mini-chart-wrapper"><canvas id="miniChartInstagram"></canvas></div>
+            <div class="panel-body">
+              <div class="insight-block">
+                <h4>Proyeksi Tren Penjualan</h4>
+                <p id="insightPredictiveText">Memuat model prediksi regresi linier berdasarkan data historis...</p>
+                <div class="predictive-chart-wrapper">
+                  <canvas id="chartPredictive"></canvas>
+                </div>
+              </div>
             </div>
           </div>
         </div>
