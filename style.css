@@ -647,6 +647,8 @@ body::before {
   .charts-row {
     grid-template-columns: 1fr;
   }
+}
+
 /* =========================================
    Insights Section
    ========================================= */
@@ -746,8 +748,6 @@ body::before {
   .insight-cards-container {
     grid-template-columns: 1fr;
   }
-}
-
 }
 
 @media (max-width: 768px) {
