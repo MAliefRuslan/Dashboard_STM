@@ -256,15 +256,15 @@ function generateInsights(data, cabang, month) {
     }
   }
 
-  let timeText = 'Data belum cukup.';
+  let timeText = 'Data historis belum cukup untuk membuat perencanaan jam operasional.';
   if (peakHour !== null) {
-    timeText = `Jam tersibuk adalah pukul <strong>${String(peakHour).padStart(2, '0')}:00 - ${String(peakHour + 1).padStart(2, '0')}:00</strong>. `;
+    timeText = `<strong>Perencanaan Operasional (${month}):</strong> Berdasarkan lonjakan trafik di pukul <strong>${String(peakHour).padStart(2, '0')}:00 - ${String(peakHour + 1).padStart(2, '0')}:00</strong>, `;
     if (peakHour >= 16 && peakHour <= 18) {
-      timeText += 'Traffic tertinggi terjadi tepat di jam-jam awal buka restoran (sore/awal malam). Pastikan persiapan (prep) bahan baku dan kebersihan area makan sudah 100% tuntas sebelum jam buka untuk menyambut lonjakan pengunjung awal.';
+      timeText += 'jadwalkan <em>staff briefing</em> dan finalisasi <em>prep</em> dapur selambatnya pukul 15.30. Alokasikan kru tambahan di area depan untuk mengatur antrean awal buka.';
     } else if (peakHour >= 19 && peakHour <= 21) {
-      timeText += 'Ini adalah jam utama makan malam (Prime Dinner Time). Rekomendasi: Pastikan ketersediaan meja yang cukup, alur pesanan yang cepat, dan berikan promosi "Paket Makan Keluarga" untuk memaksimalkan rombongan yang datang.';
+      timeText += 'alokasikan jumlah kru kasir dan pelayan maksimal (Full Team) pada rentang "Prime Dinner Time" ini. Siapkan meja panjang untuk rombongan keluarga agar <em>turnover</em> meja tetap cepat.';
     } else {
-      timeText += 'Puncak keramaian ada di larut malam (Late Night Dining). Fokuskan pada layanan cepat dan keamanan parkir, serta buat opsi menu porsi personal yang cocok untuk pengunjung yang datang larut.';
+      timeText += 'atur jadwal <em>shift</em> kru untuk memastikan layanan cepat di larut malam. Fokuskan perencanaan pada penerangan area parkir dan keamanan pengunjung.';
     }
   }
 
@@ -275,40 +275,38 @@ function generateInsights(data, cabang, month) {
       if (sales > prevMax) { prevMax = sales; prevPeak = parseInt(hour, 10); }
     }
     if (prevPeak !== null && prevPeak !== peakHour) {
-      timeText += `<br><br>📊 <em>Bulan ${prevMonthName}:</em> Puncak jam makan ada di <strong>${String(prevPeak).padStart(2, '0')}:00</strong>. Terdapat pergeseran tren waktu kedatangan pelanggan di bulan ${month}.`;
-    } else if (prevPeak !== null) {
-      timeText += `<br><br>📊 <em>Bulan ${prevMonthName}:</em> Puncak jam makan stabil di jam yang sama. Persiapan staf sudah bisa diprediksi untuk bulan ${month}.`;
+      timeText += `<br><br>⚠️ <em>Action Item:</em> Antisipasi pergeseran trafik pengunjung. Sesuaikan jadwal istirahat karyawan agar tidak bentrok dengan jam ${String(peakHour).padStart(2, '0')}:00.`;
     }
   }
 
   document.getElementById('insightTime').innerHTML = timeText;
 
   // 2. Product Prediction & Bundling
-  let productText = 'Data belum cukup.';
+  let productText = 'Data belum cukup untuk membuat perencanaan inventory.';
   if (data.topMenu && data.topMenu.length >= 2) {
     const top1 = data.topMenu[0].menu;
     const top2 = data.topMenu[1].menu;
     const isTaichan = top1.toLowerCase().includes('taichan') || top1.toLowerCase().includes('sate');
-    productText = `Menu "Bintang" bulan ini adalah <strong>${top1}</strong> dan <strong>${top2}</strong>. `;
+    productText = `<strong>Perencanaan Menu & Inventory (${month}):</strong> Prioritaskan pengadaan pasokan bahan baku (<em>supply chain</em>) untuk <strong>${top1}</strong> dan <strong>${top2}</strong>. `;
     if (isTaichan) {
-      productText += 'Masyarakat Makassar menyukai cita rasa pedas gurih, namun butuh penetral. Prediksi: Buat <strong>Paket Makan Bundling</strong> (Sate Taichan + Minuman Manis Laris) untuk <i>upselling</i> otomatis per meja.';
+      productText += 'Siapkan skema <strong>Paket Makan Bundling</strong> (Sate + Minuman) bulan depan sebagai standar <i>upselling</i> kasir guna mendongkrak rata-rata pembelian per struk.';
     } else {
-      productText += 'Prediksi Bisnis: Buat paket bundling kedua menu ini dengan harga spesial untuk mendongkrak omzet harian.';
+      productText += 'Rancang paket promosi bundling kedua menu unggulan ini untuk di-<em>push</em> pada materi pemasaran bulan depan.';
     }
 
     if (prevData && prevData.topMenu && prevData.topMenu.length > 0) {
       const prevTop1 = prevData.topMenu[0].menu;
       if (top1 !== prevTop1) {
-        productText += `<br><br>📈 <em>Bulan ${prevMonthName}:</em> Menu terlaris adalah <strong>${prevTop1}</strong>. Terjadi pergeseran selera masakan di bulan ${month} yang perlu diperhatikan persediaan bahannya.`;
+        productText += `<br><br>📦 <em>Action Item:</em> Kalibrasi ulang rasio belanja stok bahan baku ke supplier karena terdapat pergantian tren dari ${prevTop1} ke ${top1}.`;
       } else {
-        productText += `<br><br>📈 <strong>${top1}</strong> berhasil mempertahankan posisi menu terlaris dari bulan ${prevMonthName}. Pastikan stok selalu aman!`;
+        productText += `<br><br>📦 <em>Action Item:</em> Negosiasikan harga bahan baku grosir untuk <strong>${top1}</strong> dengan supplier (karena volume stabil tinggi), guna memperlebar margin profit bulan depan.`;
       }
     }
   }
   document.getElementById('insightProduct').innerHTML = productText;
 
   // 3. Business Decision & Location Context
-  let businessText = '';
+  let businessText = `<strong>Perencanaan Bisnis Eksekutif:</strong><br><br>`;
   let topPayment = null;
   let maxPay = 0;
   if (data.paymentMethod) {
@@ -323,9 +321,9 @@ function generateInsights(data, cabang, month) {
   if (topPayment) {
     const isEwallet = topPayment.toLowerCase().includes('qris') || topPayment.toLowerCase().includes('gopay') || topPayment.toLowerCase().includes('ovo') || topPayment.toLowerCase().includes('shopee');
     if (isEwallet) {
-      businessText += `Mayoritas pengunjung menggunakan <strong>${topPayment}</strong>. Keputusan: Pasang banner promo QRIS/Cashback di meja kasir. `;
+      businessText += `💳 <em>Strategi Transaksi:</em> Cetak dan tempatkan ulang materi QRIS/E-Wallet di setiap meja agar pelanggan bisa order & bayar langsung (self-ordering system) untuk mengurangi antrean di kasir utama. `;
     } else {
-      businessText += `Metode pembayaran teratas adalah <strong>${topPayment}</strong>. Pastikan kelancaran sistem ini di kasir. `;
+      businessText += `💳 <em>Strategi Transaksi:</em> Siapkan uang kembalian (receh) yang memadai sebagai persiapan lonjakan pelanggan, karena <strong>${topPayment}</strong> mendominasi transaksi. `;
     }
   }
 
@@ -335,18 +333,18 @@ function generateInsights(data, cabang, month) {
     const diff = currentSales - prevSales;
     const pct = (diff / prevSales * 100).toFixed(1);
     if (diff > 0) {
-      businessText += `<br><br>💰 <em>${prevMonthName} ke ${month}:</em> Omzet naik <strong>+${pct}%</strong>! Pertahankan kualitas rasa dan kecepatan layanan makanan.`;
+      businessText += `<br><br>🎯 <em>Action Plan Keuangan:</em> Alokasikan surplus omzet (+${pct}%) bulan ini untuk budget marketing digital bulan depan (Ads/KOL) guna mengunci momentum pertumbuhan.`;
     } else {
-      businessText += `<br><br>📉 <em>${prevMonthName} ke ${month}:</em> Omzet turun <strong>${pct}%</strong> dibanding bulan ${prevMonthName}. Evaluasi kembali strategi marketing dan paket promo makan di tempat.`;
+      businessText += `<br><br>⚠️ <em>Action Plan Keuangan:</em> Bentuk tim audit kecil untuk mengevaluasi *food waste* dan menekan *operational cost*, merespons tren penurunan omzet ${pct}%.`;
     }
   }
 
   if (cabang.toLowerCase().includes('pettarani')) {
-    businessText += '<br><br>📍 <em>Konteks AP. Pettarani:</em> Kawasan perkantoran sibuk. Mengingat jam operasional (16.00-00.00), luncurkan promo "After Office Hour" atau "Paket Pulang Kerja" (16.30-18.30) untuk menarik karyawan yang sedang bersantai sambil menunggu macet reda.';
+    businessText += '<br><br>📍 <em>Taktik Cab. Pettarani:</em> Implementasikan promo "After Office Hour" (16.30-18.30). Siapkan media promosi berupa spanduk depan yang terlihat jelas oleh karyawan ruko yang pulang kerja, tawarkan tempat persinggahan nyaman anti-macet.';
   } else if (cabang.toLowerCase().includes('mappanyukki')) {
-    businessText += '<br><br>📍 <em>Konteks Mappanyukki:</em> Titik kuliner malam strategis. Keputusan: Tawarkan "Paket Nongkrong Malam" atau promo "Late Night Snack" (di atas jam 21.00), serta pastikan pencahayaan dan area parkir memadai untuk kenyamanan pengunjung malam.';
+    businessText += '<br><br>📍 <em>Taktik Cab. Mappanyukki:</em> Rancang program "Paket Nongkrong Malam" (di atas 21.00). Koordinasikan dengan tukang parkir setempat agar kapasitas kendaraan maksimal, dan evaluasi penambahan lampu penerangan area makan luar.';
   } else {
-    businessText += '<br><br>📍 <em>Opsi Skala Makassar:</em> Fokus operasional di sore-malam hari. Tingkatkan penjualan dengan "Dinner Family Package" (19.00-21.00) dan pastikan kualitas kemasan pesan-antar (Ojol) tetap hangat untuk pesanan larut malam.';
+    businessText += '<br><br>📍 <em>Taktik Operasional:</em> Rencanakan pengadaan *packaging* khusus pesan-antar skala besar dengan penahan panas (*thermal*) untuk memastikan standar kualitas pengiriman tetap kompetitif di jam-jam larut malam.';
   }
   
   document.getElementById('insightBusiness').innerHTML = businessText || 'Data belum cukup.';
@@ -360,17 +358,17 @@ function generateInsights(data, cabang, month) {
   
   const avgBill = data.totalBills > 0 ? (data.totalSales / data.totalBills) : 0;
 
-  marketingText += `Berdasarkan pantauan tren F&B Makassar terbaru (Kuartal ini):<br><br>`;
-  marketingText += `<strong>1. Product:</strong> Tren "Instagramable" sangat kuat. Tingkatkan estetika <em>plating</em> (penyajian) untuk <em>${topProductForMkt}</em> agar konsumen memotret dan mempromosikannya secara organik ke TikTok/Instagram.<br><br>`;
+  marketingText += `<strong>Rencana Eksekusi Marketing (Strategi 4P):</strong><br><br>`;
+  marketingText += `<strong>1. Product Action:</strong> Standarisasi ulang estetika *plating* (penyajian) untuk <em>${topProductForMkt}</em>. Buat SOP baru untuk kru dapur agar setiap porsi yang keluar "Camera Ready" untuk mendorong pemasaran organik dari pelanggan.<br><br>`;
   
   if (avgBill > 0 && avgBill < 35000) {
-    marketingText += `<strong>2. Price:</strong> *Smart Consumer* Makassar menyukai "Value for Money". Rata-rata bill Anda cukup terjangkau. Pertahankan ini sebagai *selling point* kuat!<br><br>`;
+    marketingText += `<strong>2. Price Action:</strong> Gaungkan *tagline* "Makan Kenyang, Harga Tenang" di semua banner digital bulan depan, memaksimalkan fakta bahwa *Average Bill* sangat ramah kantong masyarakat Makassar.<br><br>`;
   } else {
-    marketingText += `<strong>2. Price:</strong> Tawarkan menu paket porsi pelajar/mahasiswa agar cakupan pasar lebih luas dan inklusif.<br><br>`;
+    marketingText += `<strong>2. Price Action:</strong> Rancang satu menu *entry-level* (Harga Pelajar/Mahasiswa) untuk bulan depan guna mengakuisisi target pasar anak muda Makassar yang sensitif terhadap harga.<br><br>`;
   }
   
-  marketingText += `<strong>3. Place:</strong> Walau ini restoran *dine-in*, tren F&B Makassar menunjukkan lonjakan drastis pada pesanan GoFood/GrabFood. Pisahkan antrean *driver* Ojol dari antrean pelanggan *dine-in* agar sirkulasi lancar.<br><br>`;
-  marketingText += `<strong>4. Promotion:</strong> Dominasi sistem transaksi digital (seperti QRIS) membuka peluang besar untuk kampanye *loyalty program* berbasis stempel digital (misal: "Beli 5 kali, gratis 1 porsi").`;
+  marketingText += `<strong>3. Place Action:</strong> Siapkan denah (*layout*) baru bulan depan untuk secara fisik memisahkan jalur antrean/pengambilan *driver* Ojol dan antrean pelanggan *dine-in* agar tidak terjadi penumpukan (*bottleneck*) di jam sibuk.<br><br>`;
+  marketingText += `<strong>4. Promotion Action:</strong> Terapkan sistem *Loyalty Program* digital (Kumpulkan 5 stamp = 1 porsi gratis). Cetak materi promo *table-tent* untuk diletakkan di setiap meja agar kasir mudah menawarkannya.`;
 
   document.getElementById('insightMarketing').innerHTML = marketingText;
 
@@ -416,29 +414,28 @@ function generateInsights(data, cabang, month) {
     }
   }
 
-  igText += `<strong>📱 Audit Konten ${igHandle}:</strong><br><br>`;
+  igText += `<strong>📱 Content Plan & Timeline ${igHandle}:</strong><br><br>`;
 
-  igText += `<strong>1. Konten Unggulan (AIDA - Attention):</strong> Buat video ASMR proses <em>pembakaran ${contentFocusMenu}</em> dengan angle close-up. Konten jenis ini mendominasi tren FoodTok Makassar dan berpotensi viral karena visual api + suara sizzling yang menggugah selera.`;
+  igText += `<strong>1. Produksi Video Pilar:</strong> Jadwalkan syuting video ASMR proses <em>pembakaran ${contentFocusMenu}</em> minggu depan. Gunakan lensa *close-up* untuk menangkap detail "api & sizzling" yang terbukti ampuh meraih algoritma *FoodTok* Makassar.`;
   if (secondMenu) {
-    igText += ` Selang-seling juga dengan konten <em>${secondMenu}</em> agar feed bervariasi.`;
+    igText += ` Masukkan <em>${secondMenu}</em> sebagai cameo/konten pendamping.`;
   }
   igText += `<br><br>`;
 
-  igText += `<strong>2. Jadwal Posting Optimal:</strong> Berdasarkan data penjualan, peak hour Anda berada di waktu <em>${peakLabel}</em>. Posting konten Instagram Reels/Stories pada pukul <strong>${bestPostHour} WITA</strong> (± 2 jam sebelum jam ramai) agar audiens sudah "lapar mata" sebelum datang ke tempat.<br><br>`;
+  igText += `<strong>2. Penjadwalan Posting Otomatis:</strong> Setel *scheduler* (misal: Meta Business Suite) untuk mengunggah materi Reels/Stories secara rutin pada pukul <strong>${bestPostHour} WITA</strong>. Ini adalah rentang *golden time* ± 2 jam sebelum kedatangan massa ${peakLabel}.<br><br>`;
 
-  igText += `<strong>3. Konten Rutin yang Wajib Ada (Kalender Mingguan):</strong><br>`;
-  igText += `&nbsp;&nbsp;• <em>Senin:</em> Behind-the-scene persiapan bahan segar (bangun trust & transparansi)<br>`;
-  igText += `&nbsp;&nbsp;• <em>Rabu:</em> Repost UGC (User Generated Content) dari pelanggan yang nge-tag ${igHandle}<br>`;
-  igText += `&nbsp;&nbsp;• <em>Jumat:</em> Promo weekend atau teaser menu spesial malam Sabtu<br>`;
-  igText += `&nbsp;&nbsp;• <em>Sabtu:</em> Instagram Reels ASMR / Cinematic food video<br><br>`;
+  igText += `<strong>3. Kalender Editorial Bulan Depan:</strong><br>`;
+  igText += `&nbsp;&nbsp;• <em>Setiap Senin:</em> Posting format "Behind the Kitchen" untuk validasi kebersihan masakan.<br>`;
+  igText += `&nbsp;&nbsp;• <em>Setiap Rabu:</em> Kurasi UGC (User Generated Content) dan Repost ke IG Story.<br>`;
+  igText += `&nbsp;&nbsp;• <em>Jumat & Sabtu:</em> Eksekusi iklan berbayar (Boost Post) untuk paket promosi *weekend*.<br><br>`;
 
   if (takeawayPct > 30) {
-    igText += `<strong>4. Insight Takeaway (${takeawayPct}% transaksi):</strong> Karena hampir sepertiga transaksi dari pesan antar, buat konten khusus <em>"Unboxing dari rumah"</em> — tunjukkan bahwa packaging tetap rapi & sate tetap hangat walau diantar lewat Ojol. Ini sangat efektif untuk mendorong konversi order online.<br><br>`;
+    igText += `<strong>4. Kampanye Pesan-Antar:</strong> Siapkan materi visual berseri (foto karousel) dengan konsep <em>"Quality Delivery"</em>—menonjolkan *packaging* yang aman dan anti-tumpah, menargetkan pelanggan rumahan Ojol.<br><br>`;
   } else {
-    igText += `<strong>4. Ajakan Dine-in:</strong> Karena mayoritas transaksi adalah makan di tempat, buat konten yang menunjukkan <em>suasana restoran yang ramai & nyaman</em> (social proof) agar calon pelanggan yang ragu langsung terdorong datang.<br><br>`;
+    igText += `<strong>4. Kampanye FOMO Dine-in:</strong> Kumpulkan *footage* suasana restoran yang ramai/antre. Edit menjadi satu kompilasi *social proof* untuk *Pinned Post* guna menciptakan efek FOMO (Fear Of Missing Out) bagi pengikut baru.<br><br>`;
   }
 
-  igText += `<strong>5. CTA (Call-to-Action) di Setiap Post:</strong> Pastikan setiap caption berakhir dengan CTA jelas. Contoh: <em>"Malam ini buka jam 16.00! Langsung ke Mappanyukki atau order via link di bio 🔥"</em>. Tambahkan link GoFood/GrabFood di bio Instagram.`;
+  igText += `<strong>5. Optimasi Bio & Link:</strong> Update teks Bio Instagram dan tautan (Linktree) minggu ini. Buat SOP *Caption* baku yang wajib diakhiri CTA: <em>"Malam ini buka jam 16.00! Meluncur ke lokasi atau klik link di bio 🔥"</em>.`;
 
   document.getElementById('insightInstagram').innerHTML = igText;
 
