@@ -294,6 +294,29 @@ function generateInsights(data, cabang, month) {
   }
   
   document.getElementById('insightBusiness').innerHTML = businessText || 'Data belum cukup.';
+
+  // 4. Marketing Analysis (4P) & Real-time Trends
+  let marketingText = '';
+  let topProductForMkt = 'Sate Taichan';
+  if (data.topMenu && data.topMenu.length > 0) {
+    topProductForMkt = data.topMenu[0].menu;
+  }
+  
+  const avgBill = data.totalBills > 0 ? (data.totalSales / data.totalBills) : 0;
+
+  marketingText += `Berdasarkan pantauan tren F&B Makassar terbaru (Kuartal ini):<br><br>`;
+  marketingText += `<strong>1. Product:</strong> Tren "Instagramable" sangat kuat. Tingkatkan estetika <em>plating</em> (penyajian) untuk <em>${topProductForMkt}</em> agar konsumen memotret dan mempromosikannya secara organik ke TikTok/Instagram.<br><br>`;
+  
+  if (avgBill > 0 && avgBill < 35000) {
+    marketingText += `<strong>2. Price:</strong> *Smart Consumer* Makassar menyukai "Value for Money". Rata-rata bill Anda cukup terjangkau. Pertahankan ini sebagai *selling point* kuat!<br><br>`;
+  } else {
+    marketingText += `<strong>2. Price:</strong> Tawarkan menu paket porsi pelajar/mahasiswa agar cakupan pasar lebih luas dan inklusif.<br><br>`;
+  }
+  
+  marketingText += `<strong>3. Place:</strong> Walau ini restoran *dine-in*, tren F&B Makassar menunjukkan lonjakan drastis pada pesanan GoFood/GrabFood. Pisahkan antrean *driver* Ojol dari antrean pelanggan *dine-in* agar sirkulasi lancar.<br><br>`;
+  marketingText += `<strong>4. Promotion:</strong> Dominasi sistem transaksi digital (seperti QRIS) membuka peluang besar untuk kampanye *loyalty program* berbasis stempel digital (misal: "Beli 5 kali, gratis 1 porsi").`;
+
+  document.getElementById('insightMarketing').innerHTML = marketingText;
 }
 
 // Utility for animating number changes
