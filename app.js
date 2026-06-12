@@ -201,12 +201,13 @@ function generateInsights(data, cabang, month) {
 
   let timeText = 'Data belum cukup.';
   if (peakHour !== null) {
-    const isNight = peakHour >= 18 || peakHour <= 2;
     timeText = `Jam tersibuk adalah pukul <strong>${String(peakHour).padStart(2, '0')}:00 - ${String(peakHour + 1).padStart(2, '0')}:00</strong>. `;
-    if (isNight) {
-      timeText += 'Ini menunjukkan tingginya minat makan malam (dinner). Rekomendasi: Pastikan ketersediaan meja yang cukup, pelayanan cepat saji, dan berikan promosi "Paket Makan Keluarga" untuk menarik rombongan.';
+    if (peakHour >= 16 && peakHour <= 18) {
+      timeText += 'Traffic tertinggi terjadi tepat di jam-jam awal buka restoran (sore/awal malam). Pastikan persiapan (prep) bahan baku dan kebersihan area makan sudah 100% tuntas sebelum jam buka untuk menyambut lonjakan pengunjung awal.';
+    } else if (peakHour >= 19 && peakHour <= 21) {
+      timeText += 'Ini adalah jam utama makan malam (Prime Dinner Time). Rekomendasi: Pastikan ketersediaan meja yang cukup, alur pesanan yang cepat, dan berikan promosi "Paket Makan Keluarga" untuk memaksimalkan rombongan yang datang.';
     } else {
-      timeText += 'Puncak traffic berada di siang/sore hari. Fokuskan kecepatan pelayanan staf dan pastikan bahan baku aman untuk menghadapi lonjakan jam makan.';
+      timeText += 'Puncak keramaian ada di larut malam (Late Night Dining). Fokuskan pada layanan cepat dan keamanan parkir, serta buat opsi menu porsi personal yang cocok untuk pengunjung yang datang larut.';
     }
   }
 
