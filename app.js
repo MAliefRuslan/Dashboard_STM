@@ -349,10 +349,17 @@ function generateInsights(data, cabang, month) {
   // Calculate takeaway ratio for content angle
   let takeawayPct = 0;
   if (data.visitPurpose) {
-    const totalVisit = data.visitPurpose.reduce((s, v) => s + v.count, 0);
-    const takeaway = data.visitPurpose.find(v => v.type && (v.type.toLowerCase().includes('take') || v.type.toLowerCase().includes('ojol') || v.type.toLowerCase().includes('grab') || v.type.toLowerCase().includes('gofood')));
-    if (takeaway && totalVisit > 0) {
-      takeawayPct = Math.round((takeaway.count / totalVisit) * 100);
+    const entries = Object.entries(data.visitPurpose);
+    const totalVisit = entries.reduce((s, [k, v]) => s + v, 0);
+    const takeawaySum = entries
+      .filter(([k, v]) => {
+        const type = k.toLowerCase();
+        return type.includes('take') || type.includes('ojol') || type.includes('grab') || type.includes('gofood') || type.includes('shopee');
+      })
+      .reduce((s, [k, v]) => s + v, 0);
+
+    if (totalVisit > 0) {
+      takeawayPct = Math.round((takeawaySum / totalVisit) * 100);
     }
   }
 
